@@ -165,31 +165,31 @@ function mn_deps {
         $install gcc make socat psmisc xterm openssh-clients iperf \
             iproute telnet python-setuptools libcgroup-tools \
             ethtool help2man net-tools
-        $install ${PYPKG}-pyflakes pylint ${PYPKG}-pep8-naming \
+        $install ${PYPKG}-pyflakes pylint ${PYPKG}-pycodestyle-naming \
             ${PYPKG}-pexpect
     elif [ "$DIST" = "SUSE LINUX"  ]; then
 		$install gcc make socat psmisc xterm openssh iperf \
 			iproute telnet ${PYPKG}-setuptools libcgroup-tools \
 			ethtool help2man python-pyflakes python3-pylint \
-                        python-pep8 ${PYPKG}-pexpect ${PYPKG}-tk
+                        python-pycodestyle ${PYPKG}-pexpect ${PYPKG}-tk
     else  # Debian/Ubuntu
         pf=pyflakes
-        pep8=pep8
+        pycodestyle=pycodestyle
         # Starting around 20.04, installing pyflakes instead of pyflakes3
         # causes Python 2 to be installed, which is exactly NOT what we want.
         if [ "$DIST" = "Ubuntu" -a `expr $RELEASE '>=' 20.04` = "1" ]; then
                 pf=pyflakes3
         fi
         # Debian 11 "bullseye" renamed
-        # * pep8 to python3-pep8
+        # * pycodestyle to python3-pycodestyle
         # * pyflakes to pyflakes3
         if [ "$DIST" = "Debian" -a `expr $RELEASE '>=' 11` = "1" ]; then
                 pf=pyflakes3
-                pep8=python3-pep8
+                pycodestyle=python3-pycodestyle
         fi
 
         $install gcc make socat psmisc xterm ssh iperf telnet \
-                 ethtool help2man $pf pylint $pep8 \
+                 ethtool help2man $pf pylint $pycodestyle \
                  net-tools ${PYPKG}-tk
 
         # Install pip
@@ -203,7 +203,7 @@ function mn_deps {
             sudo ${PYTHON} get-pip.py
             rm get-pip.py
         fi
-       ${python} -m pip install pexpect
+       ${python} -m pip install --break-system-packages --break-system-packages pexpect
         $install iproute2 || $install iproute
         $install cgroup-tools || $install cgroup-bin
         $install cgroupfs-mount
@@ -533,7 +533,7 @@ function ryu {
     cd ryu
 
     # install ryu
-    sudo pip install -r tools/pip-requires -r tools/optional-requires \
+    sudo pip install --break-system-packages --break-system-packages -r tools/pip-requires -r tools/optional-requires \
         -r tools/test-requires
     sudo python setup.py install
 
@@ -636,7 +636,7 @@ function oftest {
 
     # Install deps:
     $install tcpdump
-    $install ${PYPKG}-scapy || sudo $PYTHON -m pip install scapy
+    $install ${PYPKG}-scapy || sudo $PYTHON -m pip install --break-system-packages --break-system-packages scapy
 
     # Install oftest:
     cd $BUILD_DIR/

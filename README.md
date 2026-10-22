@@ -1,142 +1,136 @@
-Mininet: Rapid Prototyping for Software Defined Networks
-========================================================
-*The best way to emulate almost any network on your laptop!*
-
-Mininet 2.3.1b4
-
-[![Build Status][1]](https://github.com/mininet/mininet/actions)
+Mininet: Prototipagem Rápida para Redes Definidas por Software (SDN)
 
 
-### What is Mininet?
+Versão: Mininet 2.3.1b4
 
-Mininet emulates a complete network of hosts, links, and switches
-on a single machine.  To create a sample two-host, one-switch network,
-just run:
+![Status do Build][1]
 
-  `sudo mn`
 
-Mininet is useful for interactive development, testing, and demos,
-especially those using OpenFlow and SDN.  OpenFlow-based network
-controllers prototyped in Mininet can usually be transferred to
-hardware with minimal changes for full line-rate execution.
 
-### How does it work?
+O Mininet emula uma rede completa de hosts, links e switches em uma única máquina.
 
-Mininet creates virtual networks using process-based virtualization
-and network namespaces - features that are available in recent Linux
-kernels.  In Mininet, hosts are emulated as `bash` processes running in
-a network namespace, so any code that would normally run on a Linux
-server (like a web server or client program) should run just fine
-within a Mininet "Host".  The Mininet "Host" will have its own private
-network interface and can only see its own processes.  Switches in
-Mininet are software-based switches like Open vSwitch or the OpenFlow
-reference switch.  Links are virtual ethernet pairs, which live in the
-Linux kernel and connect our emulated switches to emulated hosts
-(processes).
+Para criar uma rede de exemplo com dois hosts e um switch, basta executar:
 
-### Features
+sudo mn
 
-Mininet includes:
 
-* A command-line launcher (`mn`) to instantiate networks.
+O Mininet é útil para desenvolvimento interativo, testes e demonstrações, especialmente em projetos que utilizam OpenFlow e Redes Definidas por Software (SDN — Software-Defined Networking).
 
-* A handy Python API for creating networks of varying sizes and
-  topologies.
+Os controladores de rede baseados em OpenFlow, desenvolvidos e testados em protótipos no Mininet, geralmente podem ser transferidos para equipamentos físicos com alterações mínimas, permitindo a execução em velocidade de linha (line rate).
 
-* Examples (in the `examples/` directory) to help you get started.
+Como funciona?
 
-* Full API documentation via Python `help()` docstrings, as well as
-  the ability to generate PDF/HTML documentation with `make doc`.
+O Mininet cria redes virtuais utilizando virtualização baseada em processos e network namespaces (espaços de nomes de rede), recursos disponíveis nos kernels Linux modernos.
 
-* Parametrized topologies (`Topo` subclasses) using the Mininet
-  object.  For example, a tree network may be created with the
-  command:
+No Mininet, os hosts são emulados como processos bash executados em um network namespace. Dessa forma, qualquer código que normalmente seria executado em um servidor Linux, como um servidor web ou um programa cliente, também deve funcionar normalmente dentro de um host do Mininet.
 
-  `mn --topo tree,depth=2,fanout=3`
+Cada host do Mininet possui sua própria interface de rede privada e consegue visualizar apenas seus próprios processos.
 
-* A command-line interface (`CLI` class) which provides useful
-  diagnostic commands (like `iperf` and `ping`), as well as the
-  ability to run a command to a node. For example,
+Os switches do Mininet são switches implementados em software, como o Open vSwitch ou o switch de referência do OpenFlow.
 
-  `mininet> h11 ifconfig -a`
+Os links são pares de interfaces Ethernet virtuais que existem no kernel Linux e conectam os switches emulados aos hosts emulados, que são representados por processos.
 
-  tells host h11 to run the command `ifconfig -a`
+Recursos
 
-* A "cleanup" command to get rid of junk (interfaces, processes, files
-  in /tmp, etc.) which might be left around by Mininet or Linux. Try
-  this if things stop working!
+O Mininet oferece os seguintes recursos:
 
-  `mn -c`
+Inicializador por linha de comando (mn): permite criar e instanciar redes.
+API Python: facilita a criação de redes de diferentes tamanhos e topologias.
+Exemplos práticos: disponíveis no diretório examples/, ajudam você a começar a utilizar a ferramenta.
+Documentação completa da API: disponível por meio das docstrings acessíveis com a função help() do Python. Também é possível gerar a documentação em PDF ou HTML executando make doc.
+Topologias parametrizadas: permite definir topologias por meio de subclasses de Topo, utilizando os objetos do Mininet. Por exemplo, uma rede em árvore pode ser criada com o comando:
+mn --topo tree,depth=2,fanout=3
 
-### Python 3 Support
+Interface de linha de comando (CLI): a classe CLI fornece comandos úteis para diagnóstico, como iperf e ping, além de permitir a execução de comandos diretamente nos nós da rede.
 
-- Mininet 2.3.1b4 supports Python 3 and Python 2
+Por exemplo:
 
-- You can install both the Python 3 and Python 2 versions of
-Mininet side by side, but the most recent installation will
-determine which Python version is used by default by `mn`.
+mininet> h11 ifconfig -a
 
-- You can run `mn` directly with Python 2 or Python 3,
-  as long as the appropriate version of Mininet is installed,
-  e.g.
 
-      $ sudo python2 `which mn`
+Esse comando solicita que o host h11 execute o comando ifconfig -a.
 
-- More information regarding Python 3 and Python 2 support
-  may be found in the release notes on http://docs.mininet.org.
+Comando de limpeza: remove resíduos que podem permanecer no sistema após a utilização do Mininet ou de outros processos Linux, incluindo interfaces, processos e arquivos no diretório /tmp.
 
-### Other Enhancements and Information
+Se a ferramenta parar de funcionar corretamente, experimente executar:
 
-- Support for Ubuntu 22.04 LTS (and 20.04)
+sudo mn -c
 
-- More reliable testing and CI via github actions
+Suporte ao Python 3
+O Mininet 2.3.1b4 oferece suporte ao Python 3 e ao Python 2.
+É possível instalar as versões do Mininet para Python 2 e Python 3 lado a lado. Entretanto, a instalação mais recente determinará qual versão do Python será utilizada por padrão pelo comando mn.
+Você pode executar o comando mn diretamente com Python 2 ou Python 3, desde que a versão correspondente do Mininet esteja instalada.
 
-- Preliminary support for cgroups v2 (and v1)
+Por exemplo, para executar o Mininet com Python 2:
 
-- Minor bug fixes (2.3.1)
+sudo python2 "$(which mn)"
 
-- Additional information about this release and previous releases
-  may be found in the release notes on http://docs.mininet.org.
+Mais informações sobre a compatibilidade com Python 2 e Python 3 podem ser encontradas nas notas de lançamento disponíveis na documentação oficial do Mininet.
+Outras melhorias e informações
 
-### Installation
+A versão 2.3.1b4 inclui as seguintes melhorias e recursos:
 
-See `INSTALL` for installation instructions and details.
+Suporte ao Ubuntu 22.04 LTS e ao Ubuntu 20.04.
+Testes mais confiáveis e integração contínua (CI) por meio do GitHub Actions.
+Suporte preliminar ao cgroups v2 e v1.
+Pequenas correções de bugs na versão 2.3.1.
 
-### Documentation
+Informações adicionais sobre esta versão e as versões anteriores estão disponíveis nas notas de lançamento da documentação oficial do Mininet.
 
-In addition to the API documentation (`make doc`), much useful
-information, including a Mininet walkthrough and an introduction
-to the Python API, is available on the
-[Mininet Web Site](http://mininet.org).
-There is also a wiki which you are encouraged to read and to
-contribute to, particularly the Frequently Asked Questions
-(FAQ) at http://faq.mininet.org.
+Instalação
 
-### Support
+Consulte o arquivo INSTALL do projeto para obter instruções detalhadas sobre a instalação.
 
-Mininet is community-supported. We encourage you to join the
-Mininet mailing list, `mininet-discuss` at:
+Documentação
 
-<https://mailman.stanford.edu/mailman/listinfo/mininet-discuss>
+Além da documentação da API, que pode ser gerada com o comando make doc, há diversos materiais úteis para aprender a utilizar o Mininet.
 
-### Join Us
+Entre eles estão:
 
-Thanks again to all of the Mininet contributors and users!
+Site oficial: Mininet.
+Tutorial prático: apresenta os principais recursos e comandos da ferramenta.
+Introdução à API Python: explica como criar e configurar redes programaticamente.
+Wiki: contém informações adicionais e materiais de referência.
+Perguntas frequentes (FAQ): disponível em faq.mininet.org.
 
-Mininet is an open source project and is currently hosted
-at <https://github.com/mininet>. You are encouraged to download,
-examine, and modify the code, and to submit bug reports, bug fixes,
-feature requests, new features, and other issues and pull requests.
-Thanks to everyone who has contributed code to the Mininet project
-(see CONTRIBUTORS for more info!) It is because of everyone's
-hard work that Mininet continues to grow and improve.
+A comunidade incentiva os usuários a consultar a wiki e a contribuir com melhorias para a documentação.
 
-### Enjoy Mininet
+Suporte
 
-Have fun! We look forward to seeing what you will do with Mininet
-to change the networking world.
+O Mininet é mantido com o apoio de sua comunidade.
 
-Bob Lantz,
-on behalf of the Mininet Contributors
+Os usuários são incentivados a participar da lista de discussão mininet-discuss, disponível no seguinte endereço:
 
-[1]: https://github.com/mininet/mininet/workflows/mininet-tests/badge.svg
+Lista de discussão do Mininet
+
+Nesse espaço, é possível compartilhar dúvidas, trocar experiências e discutir assuntos relacionados ao desenvolvimento e à utilização da ferramenta.
+
+Participe do projeto
+
+Agradecemos novamente a todos os colaboradores e usuários do Mininet!
+
+O Mininet é um projeto de código aberto, atualmente hospedado no GitHub:
+
+Repositório oficial do Mininet
+
+Você pode baixar, examinar e modificar o código-fonte, além de contribuir com:
+
+Relatórios de bugs.
+Correções de problemas.
+Solicitações de novos recursos (feature requests).
+Implementação de novas funcionalidades.
+Relatos de outros problemas (issues).
+Solicitações de integração de código (pull requests).
+
+Agradecemos a todas as pessoas que contribuíram com o projeto. Consulte o arquivo CONTRIBUTORS para obter mais informações.
+
+É graças ao trabalho e à dedicação de toda a comunidade que o Mininet continua crescendo e evoluindo.
+
+Aproveite o Mininet!
+
+Divirta-se!
+
+Estamos ansiosos para descobrir como você utilizará o Mininet para transformar o mundo das redes de computadores.
+
+Bob Lantz
+Em nome de todos os colaboradores do Mininet.
