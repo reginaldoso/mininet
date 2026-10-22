@@ -1,136 +1,436 @@
-Mininet: Prototipagem Rápida para Redes Definidas por Software (SDN)
+# Projetos de Algoritmos Distribuídos com Mininet
 
+## Objetivo
 
-Versão: Mininet 2.3.1b4
+Desenvolver, testar e manter algoritmos distribuídos utilizando o Mininet como ambiente de experimentação.
+Este repositório foi usado durante a disciplina Projeto Final de Curso 2, em 2026.2.
 
-![Status do Build][1]
+## Estrutura do repositório
 
+O repositório já possui uma organização própria. Os experimentos de algoritmos distribuídos serão adicionados à pasta `examples/`, preservando os diretórios e arquivos originais do Mininet.
 
+A estrutura proposta é:
 
-O Mininet emula uma rede completa de hosts, links e switches em uma única máquina.
+```text
+mininet/
+├── .github/
+├── bin/
+├── build/
+├── custom/
+├── debian/
+├── doc/
+├── examples/
+│   ├── ...                         # Exemplos originais do Mininet
+│   └── distributed/
+│       ├── README.md               # Documentação dos experimentos
+│       ├── 01_basic_communication.py
+│       ├── 02_multiple_hosts.py
+│       ├── 03_broadcast.py
+│       ├── 04_gather.py
+│       ├── 05_leader_election.py
+│       ├── 06_lamport_clock.py
+│       ├── 07_mutual_exclusion.py
+│       ├── 08_heartbeat.py
+│       ├── 09_distributed_average.py
+│       └── hosts/
+│           ├── client.py           # Cliente de comunicação reutilizável
+│           └── server.py           # Servidor de comunicação reutilizável
+├── mininet/                        # Implementação original do Mininet
+├── mininet.egg-info/
+├── rascunhos/
+├── util/
+├── .gitattributes
+├── .gitignore
+├── .pylintrc
+├── CONTRIBUTORS
+├── INSTALL
+├── LICENSE
+├── Makefile
+├── mn.1
+├── mnexec
+├── mnexec.1
+├── mnexec.c
+├── projetos.md                     # Planejamento dos experimentos
+├── README.md                       # Documentação original do Mininet
+└── setup.py
+```
 
-Para criar uma rede de exemplo com dois hosts e um switch, basta executar:
+**Observação:** os diretórios originais do Mininet devem ser preservados.
 
-sudo mn
+### Responsabilidade de cada diretório e arquivo
 
+* **`examples/`**: contém exemplos de utilização do Mininet. A subpasta `distributed/` concentrará os novos experimentos.
+* **`examples/distributed/`**: contém os scripts responsáveis por criar as topologias, iniciar os processos e executar os algoritmos distribuídos.
+* **`examples/distributed/hosts/`**: contém programas auxiliares executados pelos hosts virtuais, como clientes e servidores de comunicação.
+* **`examples/distributed/README.md`**: documenta os experimentos, os requisitos e os procedimentos de execução.
+* **`projetos.md`**: mantém o planejamento geral, a ordem de implementação e as instruções de desenvolvimento.
+* **`mininet/`**: contém a implementação original do Mininet. Não deve ser utilizado como diretório para armazenar os algoritmos experimentais.
+* **`custom/`**: contém exemplos e extensões relacionados à personalização do Mininet. Poderá ser utilizado quando um experimento exigir uma topologia ou extensão específica, mas não será o local padrão para os algoritmos deste projeto.
+* **`util/`**: contém ferramentas auxiliares do Mininet. Não deve ser utilizado para armazenar a lógica dos algoritmos distribuídos.
 
-O Mininet é útil para desenvolvimento interativo, testes e demonstrações, especialmente em projetos que utilizam OpenFlow e Redes Definidas por Software (SDN — Software-Defined Networking).
+## Como utilizar a estrutura
 
-Os controladores de rede baseados em OpenFlow, desenvolvidos e testados em protótipos no Mininet, geralmente podem ser transferidos para equipamentos físicos com alterações mínimas, permitindo a execução em velocidade de linha (line rate).
+### Acessar o diretório dos experimentos
 
-Como funciona?
+Todos os comandos devem ser executados a partir da raiz do repositório, salvo indicação contrária.
 
-O Mininet cria redes virtuais utilizando virtualização baseada em processos e network namespaces (espaços de nomes de rede), recursos disponíveis nos kernels Linux modernos.
+Para acessar a pasta dos experimentos:
 
-No Mininet, os hosts são emulados como processos bash executados em um network namespace. Dessa forma, qualquer código que normalmente seria executado em um servidor Linux, como um servidor web ou um programa cliente, também deve funcionar normalmente dentro de um host do Mininet.
+```bash
+cd examples/distributed
+```
 
-Cada host do Mininet possui sua própria interface de rede privada e consegue visualizar apenas seus próprios processos.
+Para voltar à raiz do repositório:
 
-Os switches do Mininet são switches implementados em software, como o Open vSwitch ou o switch de referência do OpenFlow.
+```bash
+cd ../..
+```
 
-Os links são pares de interfaces Ethernet virtuais que existem no kernel Linux e conectam os switches emulados aos hosts emulados, que são representados por processos.
+Para listar os experimentos disponíveis:
 
-Recursos
+```bash
+ls -la examples/distributed
+```
 
-O Mininet oferece os seguintes recursos:
+Para consultar a documentação específica dos experimentos:
 
-Inicializador por linha de comando (mn): permite criar e instanciar redes.
-API Python: facilita a criação de redes de diferentes tamanhos e topologias.
-Exemplos práticos: disponíveis no diretório examples/, ajudam você a começar a utilizar a ferramenta.
-Documentação completa da API: disponível por meio das docstrings acessíveis com a função help() do Python. Também é possível gerar a documentação em PDF ou HTML executando make doc.
-Topologias parametrizadas: permite definir topologias por meio de subclasses de Topo, utilizando os objetos do Mininet. Por exemplo, uma rede em árvore pode ser criada com o comando:
-mn --topo tree,depth=2,fanout=3
+```bash
+cat examples/distributed/README.md
+```
 
-Interface de linha de comando (CLI): a classe CLI fornece comandos úteis para diagnóstico, como iperf e ping, além de permitir a execução de comandos diretamente nos nós da rede.
+### Executar os experimentos
+
+Os scripts de experimentação serão responsáveis por criar uma topologia Mininet, iniciar os hosts virtuais, executar os programas necessários e apresentar os resultados.
+
+Para executar um experimento, utilize o Python 3:
+
+```bash
+sudo python3 examples/distributed/01_basic_communication.py
+```
+
+O comando acima pressupõe que o script esteja implementado para criar e gerenciar sua própria instância do Mininet.
+Os programas auxiliares poderão ser executados nos hosts virtuais por meio dos métodos de execução de comandos disponibilizados pelo Mininet.
+
+Por exemplo, um script poderá utilizar:
+
+```python
+from mininet.net import Mininet
+from mininet.topo import SingleSwitchTopo
+from mininet.log import setLogLevel
+
+def main():
+    topo = SingleSwitchTopo(k=2)
+    net = Mininet(topo=topo)
+
+    net.start()
+
+    h1 = net.get('h1')
+    h2 = net.get('h2')
+
+    print('IP de h1:', h1.IP())
+    print('IP de h2:', h2.IP())
+
+    # Iniciar os programas e executar o experimento.
+
+    net.stop()
+
+if __name__ == '__main__':
+    setLogLevel('info')
+    main()
+```
+
+Esse código é apenas um exemplo de criação da topologia. Os experimentos completos implementam também a inicialização dos processos, a troca de mensagens e o encerramento adequado da rede.
+
+Para verificar a conectividade entre hosts, também é possível utilizar o CLI do Mininet:
+
+```bash
+sudo mn --topo single,2 --mac
+```
+
+Dentro do CLI:
+
+```text
+mininet> pingall
+mininet> h1 ip addr
+mininet> h2 ip addr
+mininet> exit
+```
+
+A opção `--mac` solicita a atribuição de endereços MAC associados aos identificadores dos hosts, facilitando a identificação dos participantes durante os experimentos.
+
+**Importante:** antes de executar um novo experimento, verifique se não há instâncias anteriores do Mininet em execução. Encerre cada topologia adequadamente para evitar conflitos de recursos e interfaces virtuais.
+
+### Como atualizar um algoritmo existente
+
+Cada algoritmo deverá possuir um arquivo próprio. Para modificar um experimento, abra o arquivo correspondente e atualize sua implementação.
 
 Por exemplo:
 
-mininet> h11 ifconfig -a
+```bash
+nano examples/distributed/01_basic_communication.py
+```
 
+Ou abra o arquivo no editor de código utilizado no projeto.
 
-Esse comando solicita que o host h11 execute o comando ifconfig -a.
+Após modificar o código:
 
-Comando de limpeza: remove resíduos que podem permanecer no sistema após a utilização do Mininet ou de outros processos Linux, incluindo interfaces, processos e arquivos no diretório /tmp.
+1. Salve as alterações.
+2. Execute novamente o experimento.
+3. Verifique se a topologia é criada corretamente.
+4. Confira se os hosts conseguem trocar mensagens.
+5. Analise os resultados e as mensagens de erro.
+6. Atualize a documentação caso o comportamento ou a forma de execução tenha mudado.
 
-Se a ferramenta parar de funcionar corretamente, experimente executar:
+*Sempre que possível, preserve uma versão funcional do algoritmo antes de introduzir modificações maiores. Isso facilita a comparação entre implementações e a identificação de erros.*
 
-sudo mn -c
+### Como adicionar um novo algoritmo
 
-Suporte ao Python 3
-O Mininet 2.3.1b4 oferece suporte ao Python 3 e ao Python 2.
-É possível instalar as versões do Mininet para Python 2 e Python 3 lado a lado. Entretanto, a instalação mais recente determinará qual versão do Python será utilizada por padrão pelo comando mn.
-Você pode executar o comando mn diretamente com Python 2 ou Python 3, desde que a versão correspondente do Mininet esteja instalada.
+Para incluir um novo experimento:
 
-Por exemplo, para executar o Mininet com Python 2:
+1. Consulte este arquivo para verificar a sequência planejada.
+2. Escolha um nome descritivo e uma numeração coerente com a ordem dos experimentos.
+3. Crie o arquivo na pasta `examples/distributed/`.
+4. Implemente a topologia e a lógica do algoritmo.
+5. Reutilize os programas auxiliares de `hosts/` quando isso for apropriado.
+6. Execute o experimento e valide seus resultados.
+7. Documente o funcionamento no `examples/distributed/README.md`.
+8. Atualize este arquivo se a inclusão modificar o planejamento geral.
 
-sudo python2 "$(which mn)"
+Exemplo de criação de um novo experimento:
 
-Mais informações sobre a compatibilidade com Python 2 e Python 3 podem ser encontradas nas notas de lançamento disponíveis na documentação oficial do Mininet.
-Outras melhorias e informações
+```bash
+touch examples/distributed/10_new_algorithm.py
+```
 
-A versão 2.3.1b4 inclui as seguintes melhorias e recursos:
+O nome definitivo deverá refletir o algoritmo implementado.
 
-Suporte ao Ubuntu 22.04 LTS e ao Ubuntu 20.04.
-Testes mais confiáveis e integração contínua (CI) por meio do GitHub Actions.
-Suporte preliminar ao cgroups v2 e v1.
-Pequenas correções de bugs na versão 2.3.1.
+Se o novo projeto exigir um programa auxiliar específico, crie-o na pasta `hosts/` ou em um subdiretório dedicado, conforme a complexidade do experimento.
 
-Informações adicionais sobre esta versão e as versões anteriores estão disponíveis nas notas de lançamento da documentação oficial do Mininet.
+Não é necessário criar uma pasta separada para cada algoritmo simples. Um arquivo Python por experimento é suficiente enquanto os projetos compartilharem uma estrutura semelhante.
+Quando um algoritmo crescer e exigir vários módulos, arquivos de configuração ou diferentes implementações, poderá ser organizado em uma subpasta própria.
 
-Instalação
+### Como reutilizar a comunicação entre hosts
 
-Consulte o arquivo INSTALL do projeto para obter instruções detalhadas sobre a instalação.
+Os programas em `hosts/` poderão fornecer funcionalidades comuns, como:
 
-Documentação
+* Inicialização de um servidor TCP.
+* Conexão de um cliente a outro host.
+* Envio e recebimento de mensagens.
+* Serialização de mensagens em JSON.
+* Identificação de remetentes e destinatários.
+* Tratamento de desconexões.
+* Registro de eventos.
 
-Além da documentação da API, que pode ser gerada com o comando make doc, há diversos materiais úteis para aprender a utilizar o Mininet.
+Os algoritmos deverão reutilizar essas funcionalidades sempre que possível, evitando duplicar código.
 
-Entre eles estão:
+Por exemplo, uma mensagem poderá seguir o formato:
 
-Site oficial: Mininet.
-Tutorial prático: apresenta os principais recursos e comandos da ferramenta.
-Introdução à API Python: explica como criar e configurar redes programaticamente.
-Wiki: contém informações adicionais e materiais de referência.
-Perguntas frequentes (FAQ): disponível em faq.mininet.org.
+```json
+{
+  "type": "REQUEST",
+  "sender": "h1",
+  "receiver": "h2",
+  "message_id": "h1-001",
+  "payload": {
+    "value": 10
+  }
+}
+```
 
-A comunidade incentiva os usuários a consultar a wiki e a contribuir com melhorias para a documentação.
+Os campos e tipos de mensagem deverão ser adaptados às necessidades de cada algoritmo.
 
-Suporte
+É importante lembrar que TCP fornece um fluxo de bytes, não uma sequência de mensagens com limites automaticamente definidos pela aplicação. Portanto, a implementação deverá estabelecer um mecanismo de delimitação ou enquadramento das mensagens, como mensagens JSON terminadas por uma quebra de linha.
 
-O Mininet é mantido com o apoio de sua comunidade.
+Também será necessário definir como cada conexão será estabelecida e encerrada.
 
-Os usuários são incentivados a participar da lista de discussão mininet-discuss, disponível no seguinte endereço:
+### Como testar e validar os algoritmos
 
-Lista de discussão do Mininet
+Cada experimento deverá ser testado inicialmente em uma topologia pequena. Depois, a quantidade de hosts e a complexidade da rede poderão ser aumentadas.
 
-Nesse espaço, é possível compartilhar dúvidas, trocar experiências e discutir assuntos relacionados ao desenvolvimento e à utilização da ferramenta.
+Durante os testes, verifique:
 
-Participe do projeto
+* Se todos os participantes esperados foram iniciados.
+* Se os endereços IP estão corretos.
+* Se as mensagens são enviadas e recebidas corretamente.
+* Se o algoritmo termina nas condições previstas.
+* Se mensagens duplicadas são tratadas adequadamente.
+* Se mensagens atrasadas ou respostas ausentes são tratadas conforme o projeto.
+* Se os recursos são liberados ao final do experimento.
+* Se os resultados são consistentes com as propriedades esperadas do algoritmo.
 
-Agradecemos novamente a todos os colaboradores e usuários do Mininet!
+Quando aplicável, registre o número de mensagens trocadas, o tempo de execução e o comportamento diante de falhas simuladas.
 
-O Mininet é um projeto de código aberto, atualmente hospedado no GitHub:
+## Sequência de algoritmos
 
-Repositório oficial do Mininet
+### Projeto 1 — Comunicação básica entre dois hosts
 
-Você pode baixar, examinar e modificar o código-fonte, além de contribuir com:
+**Arquivo:** `01_basic_communication.py`
 
-Relatórios de bugs.
-Correções de problemas.
-Solicitações de novos recursos (feature requests).
-Implementação de novas funcionalidades.
-Relatos de outros problemas (issues).
-Solicitações de integração de código (pull requests).
+Uma aplicação cliente-servidor com sockets TCP. O servidor aguarda conexões e responderá às mensagens recebidas. O cliente estabelece uma conexão, envia uma mensagem e aguarda a resposta.
 
-Agradecemos a todas as pessoas que contribuíram com o projeto. Consulte o arquivo CONTRIBUTORS para obter mais informações.
+**Objetivos:**
+* Compreender sockets TCP.
+* Identificar hosts por seus endereços IP e portas.
+* Executar processos independentes em hosts virtuais.
+* Enviar e receber mensagens.
+* Gerenciar conexões e encerramentos.
 
-É graças ao trabalho e à dedicação de toda a comunidade que o Mininet continua crescendo e evoluindo.
+**Critério:** dois hosts conseguem trocar mensagens de maneira consistente?
 
-Aproveite o Mininet!
+### Projeto 2 — Comunicação entre múltiplos hosts
 
-Divirta-se!
+**Arquivo:** `02_multiple_hosts.py`
 
-Estamos ansiosos para descobrir como você utilizará o Mininet para transformar o mundo das redes de computadores.
+Expande a comunicação para três ou mais hosts. Um processo deverá enviar mensagens a vários participantes e coletar suas respostas.
 
-Bob Lantz
-Em nome de todos os colaboradores do Mininet.
+**Objetivos:**
+* Gerenciar múltiplos participantes.
+* Identificar remetentes e destinatários.
+* Controlar respostas pendentes.
+* Trabalhar com várias conexões.
+
+**Critério:** um host consegue enviar mensagens a todos os participantes definidos e receber suas respostas?
+
+### Projeto 3 — Disseminação de mensagens
+
+**Arquivo:** `03_broadcast.py`
+
+Implementação de um broadcast centralizado, no qual um host envia uma mensagem a todos os participantes. E também uma implementação de flooding, no qual cada host encaminha mensagens novas aos vizinhos.
+Cada mensagem deverá possuir um identificador único para evitar retransmissões duplicadas.
+
+**Objetivos:**
+* Estudar disseminação de informações.
+* Identificar mensagens duplicadas.
+* Controlar retransmissões.
+* Comparar custos de comunicação.
+
+**Critério:** todos os participantes esperados recebem a mensagem sem que o encaminhamento gere um ciclo infinito?
+
+### Projeto 4 — Coleta de respostas
+
+**Arquivo:** `04_gather.py`
+
+Um host solicita informações aos demais participantes, coleta as respostas e finaliza quando todas as respostas esperadas forem recebidas ou quando um prazo for ultrapassado.
+
+**Objetivos:**
+* Implementar requisições e respostas.
+* Controlar participantes pendentes.
+* Utilizar temporizadores.
+* Tratar respostas ausentes.
+
+**Critério:** o processo solicitante consegue reunir as respostas recebidas e registrar os participantes que não responderam dentro do prazo?
+
+### Projeto 5 — Eleição de líder
+
+**Arquivo:** `05_leader_election.py`
+
+Implementação de uma versão didática de eleição de líder baseada em identificadores únicos. Os participantes trocam informações e chegam a uma decisão comum.
+Como evolução, uma implementação do algoritmo de Bully e uma eleição em anel.
+
+**Objetivos:**
+* Compreender coordenação distribuída.
+* Trocar identificadores entre participantes.
+* Anunciar o resultado da eleição.
+* Investigar a reeleição após a saída do líder.
+
+**Critério:** os participantes ativos identificam o líder de acordo com as regras definidas para o algoritmo?
+
+### Projeto 6 — Relógios lógicos de Lamport
+
+**Arquivo:** `06_lamport_clock.py`
+
+Implementação de um relógio lógico local em cada processo. O contador é incrementado antes de eventos locais e envios de mensagens. Ao receber uma mensagem com timestamp `t`, um processo atualiza seu relógio segundo a regra: `C = max(C, t) + 1`
+
+**Objetivos:**
+* Estudar causalidade.
+* Ordenar eventos logicamente.
+* Comparar eventos locais e eventos de comunicação.
+* Compreender a relação entre mensagens e relógios lógicos.
+
+**Critério:** os registros dos participantes incluem timestamps coerentes com as regras do relógio de Lamport.
+
+### Projeto 7 — Exclusão mútua distribuída
+
+**Arquivo:** `07_mutual_exclusion.py`
+
+Implementação de um mecanismo centralizado de controle de acesso a um recurso compartilhado. Desenvolvimento de uma versão distribuída baseada em mensagens de requisição e resposta, como o algoritmo de Ricart–Agrawala.
+
+**Objetivos:**
+* Controlar o acesso concorrente a recursos.
+* Implementar requisições e permissões.
+* Garantir exclusão mútua.
+* Investigar o comportamento diante de falhas.
+
+**Critério:** em condições compatíveis com as hipóteses do algoritmo, nenhum par de processos entra simultaneamente na seção crítica?
+
+### Projeto 8 — Detecção de falhas por heartbeat
+
+**Arquivo:** `08_heartbeat.py`
+
+Implementação do envio periódico de mensagens de heartbeat. Cada processo monitora o tempo desde a última mensagem recebida e pode classificar participantes como suspeitos quando um limite for ultrapassado.
+
+**Objetivos:**
+* Utilizar temporizadores.
+* Monitorar participantes.
+* Detectar ausência de mensagens.
+* Compreender as limitações da detecção de falhas.
+
+**Critério:** o sistema identifica participantes que deixam de enviar heartbeats dentro do prazo configurado?
+*(Obs.: a ausência de heartbeat deverá ser tratada como suspeita de falha, pois também pode decorrer de atrasos ou problemas de comunicação).*
+
+### Projeto 9 — Média distribuída
+
+**Arquivo:** `09_distributed_average.py`
+
+Atribui um valor numérico a cada host e calcula a média global. Inicialmente, um coordenador coleta os valores, calcula a média e distribui o resultado. Depois, a implementação avança para agregar somas parciais e quantidades de participantes.
+
+**Objetivos:**
+* Agregar informações distribuídas.
+* Representar resultados parciais em mensagens.
+* Evitar contabilizações duplicadas.
+* Comparar abordagens centralizadas e distribuídas.
+
+**Critério:** o resultado corresponde à média dos valores dos participantes definidos para o experimento?
+
+## Requisitos gerais para os experimentos
+
+Todos os algoritmos deverão seguir, quando aplicável, estas diretrizes:
+
+* Utilizar os recursos do Mininet para criar e executar a topologia.
+* Executar cada participante como um processo independente.
+* Utilizar sockets TCP ou UDP conforme os requisitos do experimento.
+* Definir os tipos e formatos das mensagens trocadas.
+* Manter o estado local necessário ao funcionamento do algoritmo.
+* Registrar eventos relevantes para facilitar a depuração.
+* Encerrar conexões, processos e topologias adequadamente.
+* Documentar os procedimentos de execução e os resultados esperados.
+* Evitar alterações no código-fonte original do Mininet quando elas não forem necessárias.
+* Identificar explicitamente as hipóteses de funcionamento e as limitações de cada algoritmo.
+
+A utilização de TCP ou UDP deverá ser uma decisão consciente. TCP facilita a comunicação confiável entre dois pontos enquanto a conexão permanece operacional, mas não garante que a aplicação remota tenha processado uma mensagem. UDP permite estudar a comunicação por datagramas, mas não fornece garantias de entrega, ordenação ou eliminação de duplicatas.
+
+## Documentação dos experimentos
+
+O arquivo `examples/distributed/README.md` deverá explicar como configurar o ambiente, executar os experimentos e interpretar seus resultados.
+
+Para cada algoritmo, documentar:
+
+* Nome e objetivo.
+* Topologia utilizada.
+* Quantidade de hosts.
+* Papel de cada participante.
+* Tipos de mensagens trocadas.
+* Estado local mantido pelos processos.
+* Comando de execução.
+* Resultado esperado.
+* Testes realizados.
+* Limitações conhecidas.
+
+O arquivo `README.md` da pasta raíz permanecerá como documento geral de planejamento. Os detalhes de execução de cada algoritmo deverão ficar em `examples/distributed/README.md` ou em arquivos adicionais, quando necessário.
+
+## Referências
+
+* [Repositório oficial do Mininet](https://github.com/mininet/mininet)
+* [Tutorial oficial do Mininet](https://mininet.org/walkthrough/)
+* [Documentação do Python](https://docs.python.org/3/)
+* [Documentação de sockets em Python](https://docs.python.org/3/library/socket.html)
