@@ -7,34 +7,33 @@ Este repositório foi usado durante a disciplina Projeto Final de Curso 2, em 20
 
 ## Estrutura do repositório
 
-O repositório já possui uma organização própria. Os experimentos de algoritmos distribuídos serão adicionados à pasta `examples/`, preservando os diretórios e arquivos originais do Mininet.
+O repositório contém uma organização personalizada. Os experimentos de algoritmos distribuídos serão adicionados à pasta `algoritmos/`, preservando os diretórios e arquivos originais do Mininet.
 
 A estrutura proposta é:
 
 ```text
 mininet/
 ├── .github/
+├── algoritmos/
+│   ├── README.md               # Documentação dos experimentos
+│   ├── 01_basic_communication.py
+│   ├── 02_multiple_hosts.py
+│   ├── 03_broadcast.py
+│   ├── 04_gather.py
+│   ├── 05_leader_election.py
+│   ├── 06_lamport_clock.py
+│   ├── 07_mutual_exclusion.py
+│   ├── 08_heartbeat.py
+│   ├── 09_distributed_average.py
+│   └── hosts/
+│       ├── client.py           # Cliente de comunicação reutilizável
+│       └── server.py           # Servidor de comunicação reutilizável
 ├── bin/
 ├── build/
 ├── custom/
 ├── debian/
 ├── doc/
 ├── examples/
-│   ├── ...                         # Exemplos originais do Mininet
-│   └── distributed/
-│       ├── README.md               # Documentação dos experimentos
-│       ├── 01_basic_communication.py
-│       ├── 02_multiple_hosts.py
-│       ├── 03_broadcast.py
-│       ├── 04_gather.py
-│       ├── 05_leader_election.py
-│       ├── 06_lamport_clock.py
-│       ├── 07_mutual_exclusion.py
-│       ├── 08_heartbeat.py
-│       ├── 09_distributed_average.py
-│       └── hosts/
-│           ├── client.py           # Cliente de comunicação reutilizável
-│           └── server.py           # Servidor de comunicação reutilizável
 ├── mininet/                        # Implementação original do Mininet
 ├── mininet.egg-info/
 ├── rascunhos/
@@ -57,15 +56,15 @@ mininet/
 
 **Observação:** os diretórios originais do Mininet devem ser preservados.
 
-### Responsabilidade de cada diretório e arquivo
+### Responsabilidade de diretórios e arquivos
 
-* **`examples/`**: contém exemplos de utilização do Mininet. A subpasta `distributed/` concentrará os novos experimentos.
+* **`custom/`**: contém os códigos que geram as topologias personalizadas de rede.
+* **`examples/`**: contém exemplos de utilização do Mininet.
 * **`examples/distributed/`**: contém os scripts responsáveis por criar as topologias, iniciar os processos e executar os algoritmos distribuídos.
-* **`examples/distributed/hosts/`**: contém programas auxiliares executados pelos hosts virtuais, como clientes e servidores de comunicação.
-* **`examples/distributed/README.md`**: documenta os experimentos, os requisitos e os procedimentos de execução.
-* **`projetos.md`**: mantém o planejamento geral, a ordem de implementação e as instruções de desenvolvimento.
+* **`algoritmos/hosts/`**: contém programas auxiliares executados pelos hosts virtuais, como clientes e servidores de comunicação.
+* **`algoritmos/README.md`**: documenta os experimentos, os requisitos e os procedimentos de execução.
+* **`README.md`**: mantém o planejamento geral, a ordem de implementação e as instruções de desenvolvimento.
 * **`mininet/`**: contém a implementação original do Mininet. Não deve ser utilizado como diretório para armazenar os algoritmos experimentais.
-* **`custom/`**: contém exemplos e extensões relacionados à personalização do Mininet. Poderá ser utilizado quando um experimento exigir uma topologia ou extensão específica, mas não será o local padrão para os algoritmos deste projeto.
 * **`util/`**: contém ferramentas auxiliares do Mininet. Não deve ser utilizado para armazenar a lógica dos algoritmos distribuídos.
 
 ## Como utilizar a estrutura
