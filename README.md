@@ -106,7 +106,7 @@ Os scripts de experimentação serão responsáveis por criar uma topologia Mini
 Para executar um experimento, utilize o Python 3:
 
 ```bash
-sudo python3 examples/distributed/01_basic_communication.py
+sudo python3 scripts/executar.py
 ```
 
 O comando acima pressupõe que o script esteja implementado para criar e gerenciar sua própria instância do Mininet.
@@ -168,10 +168,10 @@ Cada algoritmo deverá possuir um arquivo próprio. Para modificar um experiment
 Por exemplo:
 
 ```bash
-nano examples/distributed/01_basic_communication.py
+nano algoritmo/01_basic_communication.py
 ```
 
-Ou abra o arquivo no editor de código utilizado no projeto.
+Ou abra o arquivo no editor de código (ou IDE) utilizado no projeto.
 
 Após modificar o código:
 
@@ -189,18 +189,18 @@ Após modificar o código:
 Para incluir um novo experimento:
 
 1. Consulte este arquivo para verificar a sequência planejada.
-2. Escolha um nome descritivo e uma numeração coerente com a ordem dos experimentos.
-3. Crie o arquivo na pasta `examples/distributed/`.
+2. Escolha um nome descritivo.
+3. Crie o arquivo .py na pasta `algoritmos`.
 4. Implemente a topologia e a lógica do algoritmo.
 5. Reutilize os programas auxiliares de `hosts/` quando isso for apropriado.
 6. Execute o experimento e valide seus resultados.
-7. Documente o funcionamento no `examples/distributed/README.md`.
+7. Documente o funcionamento no `algoritmos/README.md`.
 8. Atualize este arquivo se a inclusão modificar o planejamento geral.
 
 Exemplo de criação de um novo experimento:
 
 ```bash
-touch examples/distributed/10_new_algorithm.py
+touch algoritmos/new_algorithm.py
 ```
 
 O nome definitivo deverá refletir o algoritmo implementado.
