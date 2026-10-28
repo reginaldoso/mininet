@@ -25,6 +25,7 @@ mininet/
 │   ├── 07_mutual_exclusion.py
 │   ├── 08_heartbeat.py
 │   ├── 09_distributed_average.py
+│   ├── logs/
 │   └── hosts/
 │       ├── client.py           # Cliente de comunicação reutilizável
 │       └── server.py           # Servidor de comunicação reutilizável
@@ -60,14 +61,15 @@ mininet/
 
 * **`custom/`**: contém os códigos que geram as topologias personalizadas de rede.
 * **`examples/`**: contém exemplos de utilização do Mininet.
-* **`examples/distributed/`**: contém os scripts responsáveis por criar as topologias, iniciar os processos e executar os algoritmos distribuídos.
+* **`algoritmos/`**: contém os algorítmos distribuídos em python a ser executado em cada host.
 * **`algoritmos/hosts/`**: contém programas auxiliares executados pelos hosts virtuais, como clientes e servidores de comunicação.
+* **`algoritmos/logs/`**: contém programas auxiliares executados pelos hosts virtuais, como clientes e servidores de comunicação.
 * **`algoritmos/README.md`**: documenta os experimentos, os requisitos e os procedimentos de execução.
 * **`README.md`**: mantém o planejamento geral, a ordem de implementação e as instruções de desenvolvimento.
 * **`mininet/`**: contém a implementação original do Mininet. Não deve ser utilizado como diretório para armazenar os algoritmos experimentais.
+* **`scripts/`**: contém os scripts responsáveis por executar as topologias personalizadas, os objetos (hosts, links, etc.), iniciar os processos e executar os algoritmos distribuídos.
 * **`util/`**: contém ferramentas auxiliares do Mininet. Não deve ser utilizado para armazenar a lógica dos algoritmos distribuídos.
 
-## Como utilizar a estrutura
 
 ### Acessar o diretório dos experimentos
 
@@ -76,7 +78,7 @@ Todos os comandos devem ser executados a partir da raiz do repositório, salvo i
 Para acessar a pasta dos experimentos:
 
 ```bash
-cd examples/distributed
+cd algoritmos
 ```
 
 Para voltar à raiz do repositório:
@@ -88,13 +90,13 @@ cd ../..
 Para listar os experimentos disponíveis:
 
 ```bash
-ls -la examples/distributed
+ls -la algoritmos
 ```
 
 Para consultar a documentação específica dos experimentos:
 
 ```bash
-cat examples/distributed/README.md
+cat algoritmos/README.md
 ```
 
 ### Executar os experimentos

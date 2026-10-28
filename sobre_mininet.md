@@ -57,6 +57,7 @@ Se a ferramenta parar de funcionar corretamente, experimente executar:
 sudo mn -c
 
 Suporte ao Python 3
+
 O Mininet 2.3.1b4 oferece suporte ao Python 3 e ao Python 2.
 É possível instalar as versões do Mininet para Python 2 e Python 3 lado a lado. Entretanto, a instalação mais recente determinará qual versão do Python será utilizada por padrão pelo comando mn.
 Você pode executar o comando mn diretamente com Python 2 ou Python 3, desde que a versão correspondente do Mininet esteja instalada.
