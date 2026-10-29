@@ -35,8 +35,11 @@ Recursos
 O Mininet oferece os seguintes recursos:
 
 Inicializador por linha de comando (mn): permite criar e instanciar redes.
+
 API Python: facilita a criação de redes de diferentes tamanhos e topologias.
+
 Exemplos práticos: disponíveis no diretório examples/, ajudam você a começar a utilizar a ferramenta.
+
 Documentação completa da API: disponível por meio das docstrings acessíveis com a função help() do Python. Também é possível gerar a documentação em PDF ou HTML executando make doc.
 Topologias parametrizadas: permite definir topologias por meio de subclasses de Topo, utilizando os objetos do Mininet. Por exemplo, uma rede em árvore pode ser criada com o comando:
 mn --topo tree,depth=2,fanout=3

@@ -1,179 +1,143 @@
-Mininet Examples
+Exemplos do Mininet
 ========================================================
 
-These examples are intended to help you get started using
-Mininet's Python API.
+Estes exemplos destinam-se a ajudar você a começar a usar
+a API em Python do Mininet.
 
 ========================================================
 
 #### baresshd.py:
 
-This example uses Mininet's medium-level API to create an sshd
-process running in a namespace. Doesn't use OpenFlow.
+Este exemplo usa a API de médio nível do Mininet para criar um processo sshd em execução em um namespace. Não utiliza OpenFlow.
 
 #### bind.py:
 
-This example shows how you can create private directories for each
-node in a Mininet topology.
+Este exemplo mostra como você pode criar diretórios privados para cada nó em uma topologia do Mininet.
 
 #### cluster.py:
 
-This example contains all of the code for experimental cluster
-edition. Remote classes and MininetCluster can be imported from
-here to create a topology with nodes on remote machines.
+Este exemplo contém todo o código para a edição experimental em cluster. Classes remotas e a `MininetCluster` podem ser importadas a partir daqui para criar uma topologia com nós em máquinas remotas.
 
 #### clusterSanity.py:
 
-This example runs cluster edition locally as a sanity check to test
-basic functionality.
+Este exemplo executa a edição em cluster localmente como um teste de sanidade para verificar a funcionalidade básica.
 
 #### clustercli.py:
 
-This example contains a CLI for experimental cluster edition.
+Este exemplo contém uma CLI para a edição experimental em cluster.
 
 #### clusterdemo.py:
 
-This example is a basic demo of cluster edition on 3 servers with
-a tree topology of depth 3 and fanout 3.
+Este exemplo é uma demonstração básica da edição em cluster em 3 servidores com uma topologia em árvore de profundidade 3 e *fanout* 3.
 
 #### consoles.py:
 
-This example creates a grid of console windows, one for each node,
-and allows interaction with and monitoring of each console, including
-graphical monitoring.
+Este exemplo cria uma grade de janelas de console, uma para cada nó, e permite a interatividade e o monitoramento de cada console, incluindo monitoramento gráfico.
 
 #### controllers.py:
 
-This example creates a network with multiple controllers, by
-using a custom `Switch()` subclass.
+Este exemplo cria uma rede com múltiplos controladores, utilizando uma subclasse customizada de `Switch()`.
 
 #### controllers2.py:
 
-This example creates a network with multiple controllers by
-creating an empty network, adding nodes to it, and manually
-starting the switches.
+Este exemplo cria uma rede com múltiplos controladores criando uma rede vazia, adicionando nós a ela e iniciando os switches manualmente.
 
 #### controlnet.py:
 
-This examples shows how you can model the control network as well
-as the data network, by actually creating two Mininet objects.
+Este exemplo mostra como você pode modelar a rede de controle assim como a rede de dados, criando efetivamente dois objetos Mininet.
 
 #### cpu.py:
 
-This example tests iperf bandwidth for varying CPU limits.
+Este exemplo testa a largura de banda com o `iperf` para diferentes limites de CPU.
 
 #### emptynet.py:
 
-This example demonstrates creating an empty network (i.e. with no
-topology object) and adding nodes to it.
+Este exemplo demonstra a criação de uma rede vazia (ou seja, sem objeto de topologia) e a adição de nós a ela.
 
 #### hwintf.py:
 
-This example shows how to add an interface (for example a real
-hardware interface) to a network after the network is created.
+Este exemplo mostra como adicionar uma interface (por exemplo, uma interface de hardware real) a uma rede após a rede ter sido criada.
 
 #### intfoptions.py:
 
-This example reconfigures a TCIntf during runtime with different
-traffic control commands to test bandwidth, loss, and delay.
+Este exemplo reconfigura uma `TCIntf` durante o tempo de execução com diferentes comandos de controle de tráfego para testar largura de banda, perda e atraso.
 
 #### limit.py:
 
-This example shows how to use link and CPU limits.
+Este exemplo mostra como usar limites de enlace (*link*) e de CPU.
 
 #### linearbandwidth.py:
 
-This example shows how to create a custom topology programatically
-by subclassing Topo, and how to run a series of tests on it.
+Este exemplo mostra como criar uma topologia personalizada via código herdando a classe `Topo`, e como executar uma série de testes nela.
 
 #### linuxrouter.py:
 
-This example shows how to create and configure a router in Mininet
-that uses Linux IP forwarding.
+Este exemplo mostra como criar e configurar um roteador no Mininet que utiliza o redirecionamento IP (*IP forwarding*) do Linux.
 
 #### miniedit.py:
 
-This example demonstrates creating a network via a graphical editor.
+Este exemplo demonstra a criação de uma rede por meio de um editor gráfico.
 
 #### mobility.py:
 
-This example demonstrates detaching an interface from one switch and
-attaching it another as a basic way to move a host around a network.
+Este exemplo demonstra o desligamento de uma interface de um switch e sua conexão a outro, como uma forma básica de mover um host pela rede.
 
 #### multiLink.py:
 
-This example demonstrates the creation of multiple links between
-nodes using a custom Topology class.
+Este exemplo demonstra a criação de múltiplos enlaces entre nós utilizando uma classe personalizada de topologia.
 
 #### multiping.py:
 
-This example demonstrates one method for
-monitoring output from multiple hosts, using `node.monitor()`.
+Este exemplo demonstra um método para monitorar a saída de múltiplos hosts utilizando `node.monitor()`.
 
 #### multipoll.py:
 
-This example demonstrates monitoring output files from multiple hosts.
+Este exemplo demonstra o monitoramento de arquivos de saída de múltiplos hosts.
 
 #### multitest.py:
 
-This example creates a network and runs multiple tests on it.
+Este exemplo cria uma rede e executa múltiplos testes nela.
 
 #### nat.py:
 
-This example shows how to connect a Mininet network to the Internet
-using NAT. It also answers the eternal question "why can't I ping
-`google.com`?"
+Este exemplo mostra como conectar uma rede do Mininet à Internet usando NAT. Ele também responde à eterna pergunta: "por que não consigo dar ping no `google.com`?"
 
 #### natnet.py:
 
-This example demonstrates how to create a network using a NAT node
-to connect hosts to the internet.
+Este exemplo demonstra como criar uma rede usando um nó NAT para conectar hosts à internet.
 
 #### numberedports.py:
 
-This example verifies the mininet ofport numbers match up to the ovs port numbers.
-It also verifies that the port numbers match up to the interface numbers
+Este exemplo verifica se os números de porta do Mininet (`ofport`) coincidem com os números de porta do OVS. Também verifica se os números de porta coincidem com os números das interfaces.
 
 #### popen.py:
 
-This example monitors a number of hosts using `host.popen()` and
-`pmonitor()`.
+Este exemplo monitora vários hosts usando `host.popen()` e `pmonitor()`.
 
 #### popenpoll.py:
 
-This example demonstrates monitoring output from multiple hosts using
-the `node.popen()` interface (which returns `Popen` objects) and `pmonitor()`.
+Este exemplo demonstra o monitoramento da saída de múltiplos hosts utilizando a interface `node.popen()` (que retorna objetos `Popen`) e o `pmonitor()`.
 
 #### scratchnet.py, scratchnetuser.py:
 
-These two examples demonstrate how to create a network by using the lowest-
-level Mininet functions. Generally the higher-level API is easier to use,
-but scratchnet shows what is going on behind the scenes.
+Estes dois exemplos demonstram como criar uma rede usando as funções de mais baixo nível do Mininet. Geralmente, a API de alto nível é mais fácil de usar, mas o *scratchnet* mostra o que está acontecendo por trás dos panos.
 
 #### simpleperf.py:
 
-A simple example of configuring network and CPU bandwidth limits.
+Um exemplo simples de configuração de limites de largura de banda de rede e CPU.
 
 #### sshd.py:
 
-This example shows how to run an `sshd` process in each host, allowing
-you to log in via `ssh`. This requires connecting the Mininet data network
-to an interface in the root namespace (generally the control network
-already lives in the root namespace, so it does not need to be explicitly
-connected.)
+Este exemplo mostra como executar um processo `sshd` em cada host, permitindo que você faça login via `ssh`. Isso requer a conexão da rede de dados do Mininet a uma interface no namespace raiz (geralmente a rede de controle já reside no namespace raiz, portanto não precisa ser conectada explicitamente).
 
 #### tree1024.py:
 
-This example attempts to create a 1024-host network, and then runs the
-CLI on it. It may run into scalability limits, depending on available
-memory and `sysctl` configuration (see `INSTALL`.)
+Este exemplo tenta criar uma rede de 1024 hosts e, em seguida, executa a CLI nela. Ele pode atingir limites de escalabilidade, dependendo da memória disponível e da configuração do `sysctl` (veja o arquivo `INSTALL`).
 
 #### treeping64.py:
 
-This example creates a 64-host tree network, and attempts to check full
-connectivity using `ping`, for different switch/datapath types.
+Este exemplo cria uma rede em árvore com 64 hosts e tenta verificar a conectividade total usando `ping`, para diferentes tipos de switch/datapath.
 
 #### vlanhost.py:
 
-An example of how to subclass Host to use a VLAN on its primary interface.
-
+Um exemplo de como criar uma subclasse de `Host` para usar uma VLAN em sua interface principal.
