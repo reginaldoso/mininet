@@ -6,19 +6,19 @@ a API em Python do Mininet.
 
 ========================================================
 
-#### baresshd.py:
+#### baresshd.py: ok
 
 Este exemplo usa a API de médio nível do Mininet para criar um processo sshd em execução em um namespace. Não utiliza OpenFlow.
 
-#### bind.py:
+#### bind.py: ok
 
 Este exemplo mostra como você pode criar diretórios privados para cada nó em uma topologia do Mininet.
 
-#### cluster.py:
+#### cluster.py: ok
 
 Este exemplo contém todo o código para a edição experimental em cluster. Classes remotas e a `MininetCluster` podem ser importadas a partir daqui para criar uma topologia com nós em máquinas remotas.
 
-#### clusterSanity.py:
+#### clusterSanity.py: ok
 
 Este exemplo executa a edição em cluster localmente como um teste de sanidade para verificar a funcionalidade básica.
 
