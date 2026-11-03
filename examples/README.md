@@ -22,27 +22,27 @@ Este exemplo contém todo o código para a edição experimental em cluster. Cla
 
 Este exemplo executa a edição em cluster localmente como um teste de sanidade para verificar a funcionalidade básica.
 
-#### clustercli.py:
+#### clustercli.py: ok
 
 Este exemplo contém uma CLI para a edição experimental em cluster.
 
-#### clusterdemo.py:
+#### clusterdemo.py: ok
 
 Este exemplo é uma demonstração básica da edição em cluster em 3 servidores com uma topologia em árvore de profundidade 3 e *fanout* 3.
 
-#### consoles.py:
+#### consoles.py: ok
 
 Este exemplo cria uma grade de janelas de console, uma para cada nó, e permite a interatividade e o monitoramento de cada console, incluindo monitoramento gráfico.
 
-#### controllers.py:
+#### controllers.py: ok
 
 Este exemplo cria uma rede com múltiplos controladores, utilizando uma subclasse customizada de `Switch()`.
 
-#### controllers2.py:
+#### controllers2.py: ok
 
 Este exemplo cria uma rede com múltiplos controladores criando uma rede vazia, adicionando nós a ela e iniciando os switches manualmente.
 
-#### controlnet.py:
+#### controlnet.py: ok
 
 Este exemplo mostra como você pode modelar a rede de controle assim como a rede de dados, criando efetivamente dois objetos Mininet.
 

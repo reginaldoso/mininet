@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-Create a network where different switches are connected to
-different controllers, by creating a custom Switch() subclass.
+Cria uma rede na qual diferentes switches estejam conectados a diferentes controladores, 
+criando uma subclasse personalizada de Switch().
 """
 
 from mininet.net import Mininet
@@ -24,6 +24,7 @@ cmap = { 's1': c0, 's2': c1, 's3': c2 }
 class MultiSwitch( OVSSwitch ):
     "Custom Switch() subclass that connects to different controllers"
     def start( self, controllers ):
+        assert self.name is not None
         return OVSSwitch.start( self, [ cmap[ self.name ] ] )
 
 

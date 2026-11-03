@@ -1,0 +1,12 @@
+# Configurações do Experimento Mininet
+
+experiment:
+  name: "Full Mesh N:N CPU Precision"
+
+topology:
+  num_hosts: 6          # Quantidade de hosts (N)
+  cpu_limit: 0.10       # 10% de limitação de CPU por host
+
+cpu_isolation:
+  core_a: "1"           # Primeiro núcleo de CPU isolado
+  core_b: "2"           # Segundo núcleo de CPU isolado
