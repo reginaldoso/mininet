@@ -1,31 +1,22 @@
 #!/usr/bin/env python
 
 """
-cpu.py: test iperf bandwidth for varying cpu limits
+cpu.py: testa a largura de banda do iperf para diferentes limites de CPU.
 
-Since we are limiting the hosts (only), we should expect the iperf
-processes to be affected, as well as any system processing which is
-billed to the hosts.
-
-We reserve >50% of cycles for system processing; we assume that
-this is enough for it not to affect results. Hosts are limited to
-40% of total cycles, which we assume is enough to make them CPU
-bound.
-
-As CPU performance increases over time, we may have to reduce the
-overall CPU allocation so that the host processing is still CPU bound.
-This is perhaps an argument for specifying performance in a more
-system-independent manner.
-
-It would also be nice to have a better handle on limiting packet
-processing cycles. It's not entirely clear to me how those are
-billed to user or system processes if we are using OVS with a kernel
-datapath. With a user datapath, they are easier to account for, but
-overall performance is usually lower.
-
-Although the iperf client uses more CPU and should be CPU bound (?),
-we measure the received data at the server since the client transmit
-rate includes buffering.
+Como estamos limitando apenas os hosts, devemos esperar que os processos do iperf sejam afetados, 
+assim como qualquer processamento do sistema que seja contabilizado como pertencente aos hosts.
+Reservamos mais de 50% dos ciclos da CPU para o processamento do sistema; presumimos que isso 
+seja suficiente para que ele não afete os resultados. Os hosts são limitados a 40% do total de
+ciclos, o que presumimos ser suficiente para torná-los limitados pela CPU (CPU-bound).
+À medida que o desempenho das CPUs aumenta ao longo do tempo, talvez seja necessário reduzir a 
+alocação total de CPU para que o processamento dos hosts continue sendo limitado pela CPU (CPU-bound).
+Isso talvez seja um argumento a favor de especificar o desempenho de uma maneira mais independente do sistema.
+Também seria interessante ter um controle melhor sobre a limitação dos ciclos da CPU destinados ao processamento
+de pacotes. Não está totalmente claro para mim como esses ciclos são contabilizados entre os processos de usuário
+e os processos do sistema quando utilizamos o OVS com um kernel datapath. Com um user datapath, é mais fácil 
+contabilizá-los, mas o desempenho geral geralmente é menor.
+Embora o cliente iperf utilize mais CPU e devesse estar limitado pela CPU (CPU-bound) (?), medimos os dados 
+recebidos no servidor, pois a taxa de transmissão do cliente inclui o preenchimento de buffers.
 """
 
 from mininet.net import Mininet

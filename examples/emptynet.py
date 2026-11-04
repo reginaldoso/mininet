@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 """
-This example shows how to create an empty Mininet object
-(without a topology object) and add nodes to it manually.
+Cria uma topologia vazia e vai adicionando os hosts manualmente
 """
 
 from mininet.net import Mininet
