@@ -46,19 +46,19 @@ Este exemplo cria uma rede com múltiplos controladores criando uma rede vazia, 
 
 Este exemplo mostra como você pode modelar a rede de controle assim como a rede de dados, criando efetivamente dois objetos Mininet.
 
-#### cpu.py:
+#### cpu.py: ok
 
 Este exemplo testa a largura de banda com o `iperf` para diferentes limites de CPU.
 
-#### emptynet.py:
+#### emptynet.py: ok
 
 Este exemplo demonstra a criação de uma rede vazia (ou seja, sem objeto de topologia) e a adição de nós a ela.
 
-#### hwintf.py:
+#### hwintf.py: ok
 
 Este exemplo mostra como adicionar uma interface (por exemplo, uma interface de hardware real) a uma rede após a rede ter sido criada.
 
-#### intfoptions.py:
+#### intfoptions.py: ok
 
 Este exemplo reconfigura uma `TCIntf` durante o tempo de execução com diferentes comandos de controle de tráfego para testar largura de banda, perda e atraso.
 

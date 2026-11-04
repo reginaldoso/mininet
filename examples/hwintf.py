@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This example shows how to add an interface (for example a real
-hardware interface) to a network after the network is created.
+Este exemplo mostra como adicionar uma interface (por exemplo, 
+uma interface de hardware real) a uma rede após a rede ser criada.
 """
 
 import re
@@ -19,7 +19,7 @@ from mininet.util import quietRun
 
 
 def checkIntf( intf ):
-    "Make sure intf exists and is not configured."
+    "Certifique-se de que a interface exista e não esteja configurada."
     config = quietRun( 'ifconfig %s 2>/dev/null' % intf, shell=True )
     if not config:
         error( 'Error:', intf, 'does not exist!\n' )
