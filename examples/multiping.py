@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+"Usar isto no experimento"
 """
 multiping.py: monitor multiple sets of hosts using ping
 
@@ -18,12 +18,11 @@ from mininet.log import info, setLogLevel
 
 
 def chunks( items, n ):
-    "Divide list l into chunks of size n - thanks Stackoverflow"
+    "Divide a lista items em blocos de tamanho n"
     return [ items[ i: i + n ] for i in range( 0, len( items ), n ) ]
 
 def startpings( host, targetips ):
-    "Tell host to repeatedly ping targets"
-
+    "Faz com que o host envie continuamente pacotes de ping para os destinos."
     targetips = ' '.join( targetips )
 
     # Simple ping loop
@@ -41,7 +40,7 @@ def startpings( host, targetips ):
     host.cmd( cmd )
 
 def multiping( netsize, chunksize, seconds):
-    "Ping subsets of size chunksize in net of size netsize"
+    "Envia pacotes de ping para subconjuntos de tamanho chunksize em uma rede de tamanho netsize."
 
     # Create network and identify subnets
     topo = SingleSwitchTopo( netsize )

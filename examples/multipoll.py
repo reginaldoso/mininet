@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 """
-Simple example of sending output to multiple files and
-monitoring them
+Exemplo simples de como enviar a saída para vários arquivos e monitorá-los.
 """
 
 
@@ -17,7 +16,7 @@ from mininet.util import decode
 
 
 def monitorFiles( outfiles, seconds, timeoutms ):
-    "Monitor set of files and return [(host, line)...]"
+    "Monitorar um conjunto de arquivos e retornar uma lista de tuplas no formato [(host, linha), ...]."
     devnull = open( '/dev/null', 'w' )  # pylint: disable=consider-using-with
     tails, fdToFile, fdToHost = {}, {}, {}
     for h, outfile in outfiles.items():

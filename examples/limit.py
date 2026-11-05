@@ -13,7 +13,7 @@ from mininet.log import setLogLevel, info
 
 
 def testLinkLimit( net, bw ):
-    "Run bandwidth limit test"
+    "Executar teste de limite de largura de banda."
     info( '*** Testing network %.2f Mbps bandwidth limit\n' % bw )
     net.iperf()
 
