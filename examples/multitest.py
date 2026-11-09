@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This example shows how to create a network and run multiple tests.
-For a more complicated test example, see udpbwtest.py.
+Este exemplo mostra como criar uma rede e executar múltiplos testes.
+Para um exemplo de teste mais complexo, veja udpbwtest.py.
 """
 
 from mininet.cli import CLI

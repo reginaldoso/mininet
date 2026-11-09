@@ -90,27 +90,27 @@ Este exemplo demonstra a criação de múltiplos enlaces entre nós utilizando u
 
 Este exemplo demonstra um método para monitorar a saída de múltiplos hosts utilizando `node.monitor()`.
 
-#### multipoll.py: pendente
+#### multipoll.py:
 
 Este exemplo demonstra o monitoramento de arquivos de saída de múltiplos hosts.
 
-#### multitest.py:  pendente
+#### multitest.py:
 
 Este exemplo cria uma rede e executa múltiplos testes nela.
 
-#### nat.py: pendente
+#### nat.py:
 
 Este exemplo mostra como conectar uma rede do Mininet à Internet usando NAT. Ele também responde à eterna pergunta: "por que não consigo dar ping no `google.com`?"
 
-#### natnet.py: pendente
+#### natnet.py:
 
 Este exemplo demonstra como criar uma rede usando um nó NAT para conectar hosts à internet.
 
-#### numberedports.py: pendente
+#### numberedports.py:
 
 Este exemplo verifica se os números de porta do Mininet (`ofport`) coincidem com os números de porta do OVS. Também verifica se os números de porta coincidem com os números das interfaces.
 
-#### popen.py: pendente
+#### popen.py:
 
 Este exemplo monitora vários hosts usando `host.popen()` e `pmonitor()`.
 

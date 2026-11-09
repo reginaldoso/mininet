@@ -16,7 +16,7 @@ from mininet.util import decode
 
 
 def monitorFiles( outfiles, seconds, timeoutms ):
-    "Monitorar um conjunto de arquivos e retornar uma lista de tuplas no formato [(host, linha), ...]."
+    "Monitora um conjunto de arquivos e retornar uma lista de tuplas no formato [(host, linha), ...]."
     devnull = open( '/dev/null', 'w' )  # pylint: disable=consider-using-with
     tails, fdToFile, fdToHost = {}, {}, {}
     for h, outfile in outfiles.items():
@@ -51,7 +51,7 @@ def monitorFiles( outfiles, seconds, timeoutms ):
 
 
 def monitorTest( N=3, seconds=3 ):
-    "Run pings and monitor multiple hosts"
+    "Executa pings e monitora múltiplos hosts"
     topo = SingleSwitchTopo( N )
     net = Mininet( topo, waitConnected=True )
     net.start()

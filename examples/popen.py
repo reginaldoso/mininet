@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 """
-This example monitors a number of hosts using host.popen() and
-pmonitor()
+Este exemplo monitora
+vários hosts utilizando host.popen() e pmonitor().
 """
 
 from mininet.net import Mininet
