@@ -2,7 +2,7 @@
 # Este arquivo armazena todas as constantes, IPs e caminhos de
 # arquivos usados no experimento.
 
-# config.py
+import os
 
 # Parâmetros dos Hosts
 HOST_1 = {
@@ -20,14 +20,16 @@ HOST_2 = {
 # Parâmetros do Switch
 SWITCH_NAME = 's1'
 
-# Configurações de Captura e Arquivos Temporários
-CAPTURE_FILE = '/tmp/captura_icmp.txt'
-PID_FILE = '/tmp/tcpdump.pid'
-PING_COUNT = 4
 
-# Comando tcpdump formatado para injetar interface dinamicamente
-TCPDUMP_CMD = (
-    'tcpdump -l -i {interface} -n -tttt icmp '
-    '> {capture_file} 2>&1 & echo $! '
-    '> {pid_file}'
-)
+# Caminho absoluto para a pasta do projeto e criação da pasta logs
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+PROCESS_PATH = os.path.join(BASE_DIR, 'processo.py') # Caminho absoluto do script
+
+# Parâmetros de portas para o script process.py
+PORTA_H1 = 5001
+PORTA_H2 = 5002
+
+# Comandos utilizando o caminho absoluto do process.py e da pasta logs
+CMD_H1 = f"python3 {PROCESS_PATH} {PORTA_H1} {HOST_2['ip'].split('/')[0]} {PORTA_H2} > {LOG_DIR}/h1.log 2>&1 &"
+CMD_H2 = f"python3 {PROCESS_PATH} {PORTA_H2} {HOST_1['ip'].split('/')[0]} {PORTA_H1} > {LOG_DIR}/h2.log 2>&1 &"
