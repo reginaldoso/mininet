@@ -114,11 +114,11 @@ Este exemplo verifica se os números de porta do Mininet (`ofport`) coincidem co
 
 Este exemplo monitora vários hosts usando `host.popen()` e `pmonitor()`.
 
-#### popenpoll.py: pendente
+#### popenpoll.py: 
 
 Este exemplo demonstra o monitoramento da saída de múltiplos hosts utilizando a interface `node.popen()` (que retorna objetos `Popen`) e o `pmonitor()`.
 
-#### scratchnet.py, scratchnetuser.py: pendente
+#### scratchnet.py, scratchnetuser.py
 
 Estes dois exemplos demonstram como criar uma rede usando as funções de mais baixo nível do Mininet. Geralmente, a API de alto nível é mais fácil de usar, mas o *scratchnet* mostra o que está acontecendo por trás dos panos.
 

@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 
 """
-Simple example of setting network and CPU parameters
+Exemplo simples de configuração dos parâmetros de rede e da CPU.
 
-NOTE: link params limit BW, add latency, and loss.
-There is a high chance that pings WILL fail and that
-iperf will hang indefinitely if the TCP handshake fails
-to complete.
+OBSERVAÇÃO: Os parâmetros dos enlaces (links) limitam a largura
+de banda (BW), adicionam latência e simulam perda de pacotes.
+
+Existe uma grande possibilidade de que os comandos ping FALHEM
+e que o iperf fique travado indefinidamente caso o handshake TCP
+(processo de estabelecimento da conexão TCP) não seja concluído
+com sucesso.
 """
 
 from sys import argv

@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 """
-Build a simple network from scratch, using mininet primitives.
-This is more complicated than using the higher-level classes,
-but it exposes the configuration details and allows customization.
+Construa uma rede simples do zero, utilizando as primitivas do Mininet.
 
-For most tasks, the higher-level API will be preferable.
+Isso é mais complexo do que utilizar as classes de nível mais alto, 
+mas permite visualizar os detalhes da configuração e oferece maior
+ liberdade de personalização.
+
+Para a maioria das tarefas, a API de nível mais alto será a opção
+ mais adequada.
 """
 
 from time import sleep

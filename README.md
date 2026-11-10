@@ -59,11 +59,10 @@ mininet/
 
 ### Responsabilidade de diretórios e arquivos
 
-* **`custom/`**: contém os códigos que geram as topologias personalizadas de rede.
+
 * **`examples/`**: contém exemplos de utilização do Mininet.
-* **`algoritmos/`**: contém os algorítmos distribuídos em python a ser executado em cada host.
-* **`algoritmos/hosts/`**: contém programas auxiliares executados pelos hosts virtuais, como clientes e servidores de comunicação.
-* **`algoritmos/logs/`**: contém programas auxiliares executados pelos hosts virtuais, como clientes e servidores de comunicação.
+* **`experimento/`**: contém os códigos de configuração dos hosts, ambiente e algorítmos distribuídos em python.
+* **`experimento/logs/`**: contém programas auxiliares executados pelos hosts virtuais, como clientes e servidores de comunicação.
 * **`algoritmos/README.md`**: documenta os experimentos, os requisitos e os procedimentos de execução.
 * **`README.md`**: mantém o planejamento geral, a ordem de implementação e as instruções de desenvolvimento.
 * **`mininet/`**: contém a implementação original do Mininet. Não deve ser utilizado como diretório para armazenar os algoritmos experimentais.
@@ -106,8 +105,16 @@ Os scripts de experimentação serão responsáveis por criar uma topologia Mini
 Para executar um experimento, utilize o Python 3:
 
 ```bash
-sudo python3 scripts/executar.py
+sudo python3 main.py -e experimento_ping
 ```
+
+ou
+
+```bash
+sudo python3 main.py -e experimento_ping.py
+```
+E pressione enter,
+
 
 O comando acima pressupõe que o script esteja implementado para criar e gerenciar sua própria instância do Mininet.
 Os programas auxiliares poderão ser executados nos hosts virtuais por meio dos métodos de execução de comandos disponibilizados pelo Mininet.
