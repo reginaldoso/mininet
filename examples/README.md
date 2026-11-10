@@ -122,22 +122,22 @@ Este exemplo demonstra o monitoramento da saída de múltiplos hosts utilizando 
 
 Estes dois exemplos demonstram como criar uma rede usando as funções de mais baixo nível do Mininet. Geralmente, a API de alto nível é mais fácil de usar, mas o *scratchnet* mostra o que está acontecendo por trás dos panos.
 
-#### simpleperf.py: pendente
+#### simpleperf.py:
 
 Um exemplo simples de configuração de limites de largura de banda de rede e CPU.
 
-#### sshd.py: pendente
+#### sshd.py:
 
 Este exemplo mostra como executar um processo `sshd` em cada host, permitindo que você faça login via `ssh`. Isso requer a conexão da rede de dados do Mininet a uma interface no namespace raiz (geralmente a rede de controle já reside no namespace raiz, portanto não precisa ser conectada explicitamente).
 
-#### tree1024.py: pendente
+#### tree1024.py:
 
 Este exemplo tenta criar uma rede de 1024 hosts e, em seguida, executa a CLI nela. Ele pode atingir limites de escalabilidade, dependendo da memória disponível e da configuração do `sysctl` (veja o arquivo `INSTALL`).
 
-#### treeping64.py: pendente
+#### treeping64.py:
 
 Este exemplo cria uma rede em árvore com 64 hosts e tenta verificar a conectividade total usando `ping`, para diferentes tipos de switch/datapath.
 
-#### vlanhost.py: pendente
+#### vlanhost.py:
 
 Um exemplo de como criar uma subclasse de `Host` para usar uma VLAN em sua interface principal.
