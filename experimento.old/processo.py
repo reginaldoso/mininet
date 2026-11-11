@@ -3,35 +3,40 @@ import threading
 import time
 import sys
 
+# Importa a função do arquivo log.py
+from log import log_formatado
+
 def exec_servidor(porta_propria):
+    end_servidor = ('0.0.0.0', porta_propria)
+    
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind(('0.0.0.0', porta_propria))
+        s.bind(end_servidor)
         s.listen(5)
-        print(f"[SERVIDOR] Nó escutando na porta {porta_propria}...", flush=True)
+        log_formatado("SERVIDOR", end_servidor, f"Nó escutando na porta {porta_propria}...")
         
         while True:
             conn, addr = s.accept()
             with conn:
                 dados = conn.recv(1024)
-                print(f"[SERVIDOR] Mensagem recebida de {addr}: {dados.decode('utf-8')}", flush=True)
+                log_formatado("SERVIDOR", addr, f"Mensagem recebida: {dados.decode('utf-8')}")
                 conn.sendall(b"OK: Mensagem processada pelo no")
 
 def exec_cliente(host_destino, porta_destino, mensagem):
-    print(f"[CLIENTE] Conectando ao destino {host_destino}:{porta_destino}...", flush=True)
+    end_destino = (host_destino, porta_destino)
+    log_formatado("CLIENTE", end_destino, "Conectando ao destino...")
     
-    # Loop de tentativas de conexões
     while True:
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.connect((host_destino, porta_destino))
+                s.connect(end_destino)
                 s.sendall(mensagem.encode('utf-8'))
                 
                 resposta = s.recv(1024)
-                print(f"[CLIENTE] Resposta do destino: {resposta.decode('utf-8')}", flush=True)
-                break  # Conexão bem-sucedida, sai do loop
+                log_formatado("CLIENTE", end_destino, f"Resposta do destino: {resposta.decode('utf-8')}")
+                break
         except ConnectionRefusedError:
-            print(f"[CLIENTE] Destino ainda não está pronto. Tentando novamente em 1 segundo...", flush=True)
+            log_formatado("CLIENTE", end_destino, "Destino ainda não está pronto. Tentando novamente em 1 segundo...")
             time.sleep(1)
 
 if __name__ == "__main__":
@@ -42,21 +47,19 @@ if __name__ == "__main__":
     MINHA_PORTA = int(sys.argv[1])
     HOST_VIZINHO = sys.argv[2]
     PORTA_VIZINHO = int(sys.argv[3])
+    
+    end_local = ('127.0.0.1', MINHA_PORTA)
 
-    # Inicia a thread do servidor em segundo plano
     t_servidor = threading.Thread(target=exec_servidor, args=(MINHA_PORTA,), daemon=True)
     t_servidor.start()
 
-    # Pequena pausa para garantir que o socket local abriu
     time.sleep(0.5)
 
-    # Inicia o cliente tentando falar com o vizinho
     exec_cliente(HOST_VIZINHO, PORTA_VIZINHO, f"Olá vizinho, mensagem enviada da porta {MINHA_PORTA}!")
 
-    # Mantém o script rodando para o servidor continuar escutando
-    print("[NÓ] Pressione CTRL+C para sair.")
+    log_formatado("NÓ", end_local, "Pressione CTRL+C para sair.")
     try:
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
-        print("\n[NÓ] Encerrando...")
+        log_formatado("NÓ", end_local, "Encerrando...")

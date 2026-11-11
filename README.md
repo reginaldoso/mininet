@@ -59,214 +59,96 @@ mininet/
 
 ### Responsabilidade de diretórios e arquivos
 
+* `experimento/main.py`: Orquestrador principal. Inicializa a rede Mininet com a topologia escolhida, mapeia a adjacência dos nós, gera o arquivo `rede.json`, lança os processos `nodo.py` em cada host virtual e gerencia o encerramento limpo da simulação.
+* `experimento/nodo.py`: Aplicação autônoma executada internamente por cada host virtual. Lê o `rede.json`, gerencia conexões de socket (UDP/TCP) e executa a lógica do algoritmo distribuído (ex.: inundação, deduplicação de mensagens).
+* `experimento/log.py`: Módulo utilitário compartilhado que padroniza o formato de impressão das mensagens no terminal e nos arquivos de log.
+* `experimento/topologias/`: Diretório contendo as classes de topologia virtual do Mininet (`topo_anel.py`, `topo_estrela.py`, etc.).
+* `experimento/rede.json`: Arquivo dinâmico gerado durante o boot do experimento contendo a tabela de adjacência (IPs e vizinhos de cada nó).
+* `experimento/logs/`: Diretório gerado automaticamente para armazenar as saídas (`stdout` e `stderr`) individuais de cada nó (`h1.log`, `h2.log`, etc.).
 
-* **`examples/`**: contém exemplos de utilização do Mininet.
-* **`experimento/`**: contém os códigos de configuração dos hosts, ambiente e algorítmos distribuídos em python.
-* **`experimento/logs/`**: contém programas auxiliares executados pelos hosts virtuais, como clientes e servidores de comunicação.
-* **`algoritmos/README.md`**: documenta os experimentos, os requisitos e os procedimentos de execução.
-* **`README.md`**: mantém o planejamento geral, a ordem de implementação e as instruções de desenvolvimento.
-* **`mininet/`**: contém a implementação original do Mininet. Não deve ser utilizado como diretório para armazenar os algoritmos experimentais.
-* **`scripts/`**: contém os scripts responsáveis por executar as topologias personalizadas, os objetos (hosts, links, etc.), iniciar os processos e executar os algoritmos distribuídos.
-* **`util/`**: contém ferramentas auxiliares do Mininet. Não deve ser utilizado para armazenar a lógica dos algoritmos distribuídos.
-
+---
 
 ### Acessar o diretório dos experimentos
 
-Todos os comandos devem ser executados a partir da raiz do repositório, salvo indicação contrária.
-
-Para acessar a pasta dos experimentos:
+Certifique-se de estar no diretório raiz do projeto no terminal antes de executar os comandos:
 
 ```bash
-cd algoritmos
-```
+cd ~/mininet
 
-Para voltar à raiz do repositório:
+### Como executar os experimentos
 
-```bash
-cd ../..
-```
+Abra o terminal no diretório raiz do repositório:
+   ```bash
+   cd ~/mininet
 
-Para listar os experimentos disponíveis:
+Realize uma limpeza preventiva de processos antigos do Mininet:
 
-```bash
-ls -la algoritmos
-```
+sudo mn -c
 
-Para consultar a documentação específica dos experimentos:
+Execute o orquestrador principal indicando o arquivo da topologia (-t) e a quantidade de nós (-n):
 
-```bash
-cat algoritmos/README.md
-```
+sudo python3 experimento/main.py -t topo_anel.py -n 6
 
-### Executar os experimentos
+Verifique no terminal a confirmação do carregamento da topologia, criação do rede.json e inicialização de cada nó.
 
-Os scripts de experimentação serão responsáveis por criar uma topologia Mininet, iniciar os hosts virtuais, executar os programas necessários e apresentar os resultados.
-
-Para executar um experimento, utilize o Python 3:
-
-```bash
-sudo python3 main.py -e experimento_ping
-```
-
-ou
-
-```bash
-sudo python3 main.py -e experimento_ping.py
-```
-E pressione enter,
-
-
-O comando acima pressupõe que o script esteja implementado para criar e gerenciar sua própria instância do Mininet.
-Os programas auxiliares poderão ser executados nos hosts virtuais por meio dos métodos de execução de comandos disponibilizados pelo Mininet.
-
-Por exemplo, um script poderá utilizar:
-
-```python
-from mininet.net import Mininet
-from mininet.topo import SingleSwitchTopo
-from mininet.log import setLogLevel
-
-def main():
-    topo = SingleSwitchTopo(k=2)
-    net = Mininet(topo=topo)
-
-    net.start()
-
-    h1 = net.get('h1')
-    h2 = net.get('h2')
-
-    print('IP de h1:', h1.IP())
-    print('IP de h2:', h2.IP())
-
-    # Iniciar os programas e executar o experimento.
-
-    net.stop()
-
-if __name__ == '__main__':
-    setLogLevel('info')
-    main()
-```
-
-Esse código é apenas um exemplo de criação da topologia. Os experimentos completos implementam também a inicialização dos processos, a troca de mensagens e o encerramento adequado da rede.
-
-Para verificar a conectividade entre hosts, também é possível utilizar o CLI do Mininet:
-
-```bash
-sudo mn --topo single,2 --mac
-```
-
-Dentro do CLI:
-
-```text
-mininet> pingall
-mininet> h1 ip addr
-mininet> h2 ip addr
-mininet> exit
-```
-
-A opção `--mac` solicita a atribuição de endereços MAC associados aos identificadores dos hosts, facilitando a identificação dos participantes durante os experimentos.
-
-**Importante:** antes de executar um novo experimento, verifique se não há instâncias anteriores do Mininet em execução. Encerre cada topologia adequadamente para evitar conflitos de recursos e interfaces virtuais.
+Interaja com a rede utilizando a CLI do Mininet gerada ou digite exit para encerrar a simulação e fechar os processos.
 
 ### Como atualizar um algoritmo existente
 
-Cada algoritmo deverá possuir um arquivo próprio. Para modificar um experimento, abra o arquivo correspondente e atualize sua implementação.
+Abra o arquivo experimento/nodo.py no seu editor de código.
 
-Por exemplo:
+Localize a função responsável pela escuta e repasse de mensagens (escutar_servidor).
 
-```bash
-nano algoritmo/01_basic_communication.py
-```
+Modifique as regras de negócio desejadas (ex.: regras de deduplicação, formato da mensagem ou filtros).
 
-Ou abra o arquivo no editor de código (ou IDE) utilizado no projeto.
+Salve o arquivo nodo.py.
 
-Após modificar o código:
-
-1. Salve as alterações.
-2. Execute novamente o experimento.
-3. Verifique se a topologia é criada corretamente.
-4. Confira se os hosts conseguem trocar mensagens.
-5. Analise os resultados e as mensagens de erro.
-6. Atualize a documentação caso o comportamento ou a forma de execução tenha mudado.
-
-*Sempre que possível, preserve uma versão funcional do algoritmo antes de introduzir modificações maiores. Isso facilita a comparação entre implementações e a identificação de erros.*
+Reexecute o experimento no terminal com o comando sudo python3 experimento/main.py -t topo_anel.py -n 6. As alterações serão aplicadas automaticamente a todos os hosts da rede.
 
 ### Como adicionar um novo algoritmo
 
-Para incluir um novo experimento:
+Crie um novo arquivo Python no diretório experimento/ (ex.: experimento/nodo_consenso.py).
 
-1. Consulte este arquivo para verificar a sequência planejada.
-2. Escolha um nome descritivo.
-3. Crie o arquivo .py na pasta `algoritmos`.
-4. Implemente a topologia e a lógica do algoritmo.
-5. Reutilize os programas auxiliares de `hosts/` quando isso for apropriado.
-6. Execute o experimento e valide seus resultados.
-7. Documente o funcionamento no `algoritmos/README.md`.
-8. Atualize este arquivo se a inclusão modificar o planejamento geral.
+Implemente a estrutura básica de carregamento do rede.json para descoberta de adjacências e inicialize o servidor de socket na PORTA_PADRAO = 5000.
 
-Exemplo de criação de um novo experimento:
+Adicione a nova lógica distribuída no script criado.
 
-```bash
-touch algoritmos/new_algorithm.py
-```
+Em experimento/main.py, atualize a linha:
+caminho_nodo = os.path.join(script_dir, "nodo_consenso.py")
 
-O nome definitivo deverá refletir o algoritmo implementado.
+Salve os arquivos e inicie o experimento via terminal.
 
-Se o novo projeto exigir um programa auxiliar específico, crie-o na pasta `hosts/` ou em um subdiretório dedicado, conforme a complexidade do experimento.
+## Como reutilizar a comunicação entre hosts
 
-Não é necessário criar uma pasta separada para cada algoritmo simples. Um arquivo Python por experimento é suficiente enquanto os projetos compartilharem uma estrutura semelhante.
-Quando um algoritmo crescer e exigir vários módulos, arquivos de configuração ou diferentes implementações, poderá ser organizado em uma subpasta própria.
+Importe o arquivo rede.json no início da execução do seu nó para extrair os dados de adjacência dinamicamente:
 
-### Como reutilizar a comunicação entre hosts
+with open("rede.json", "r") as f:
+    MAPA_REDE = json.load(f)
 
-Os programas em `hosts/` poderão fornecer funcionalidades comuns, como:
+Instancie o socket ligado ao IP do próprio host e à porta padrão fixada:
 
-* Inicialização de um servidor TCP.
-* Conexão de um cliente a outro host.
-* Envio e recebimento de mensagens.
-* Serialização de mensagens em JSON.
-* Identificação de remetentes e destinatários.
-* Tratamento de desconexões.
-* Registro de eventos.
+sock.bind((MEU_IP, 5000))
 
-Os algoritmos deverão reutilizar essas funcionalidades sempre que possível, evitando duplicar código.
+Recupere a lista de vizinhos cadastrados em MAPA_REDE[NOME_HOST]["vizinhos"] e envie mensagens diretamente para a tupla (ip_vizinho, 5000).
 
-Por exemplo, uma mensagem poderá seguir o formato:
-
-```json
-{
-  "type": "REQUEST",
-  "sender": "h1",
-  "receiver": "h2",
-  "message_id": "h1-001",
-  "payload": {
-    "value": 10
-  }
-}
-```
-
-Os campos e tipos de mensagem deverão ser adaptados às necessidades de cada algoritmo.
-
-É importante lembrar que TCP fornece um fluxo de bytes, não uma sequência de mensagens com limites automaticamente definidos pela aplicação. Portanto, a implementação deverá estabelecer um mecanismo de delimitação ou enquadramento das mensagens, como mensagens JSON terminadas por uma quebra de linha.
-
-Também será necessário definir como cada conexão será estabelecida e encerrada.
+Importe e utilize a função log_formatado do arquivo log.py em todas as emissões de logs para manter o padrão de rastreamento do sistema.
 
 ### Como testar e validar os algoritmos
 
-Cada experimento deverá ser testado inicialmente em uma topologia pequena. Depois, a quantidade de hosts e a complexidade da rede poderão ser aumentadas.
+Execute a simulação da rede via terminal principal (sudo python3 experimento/main.py -t topo_anel.py -n 4).
 
-Durante os testes, verifique:
+Abra um segundo terminal e acesse a pasta onde os logs individuais são gravados:
 
-* Se todos os participantes esperados foram iniciados.
-* Se os endereços IP estão corretos.
-* Se as mensagens são enviadas e recebidas corretamente.
-* Se o algoritmo termina nas condições previstas.
-* Se mensagens duplicadas são tratadas adequadamente.
-* Se mensagens atrasadas ou respostas ausentes são tratadas conforme o projeto.
-* Se os recursos são liberados ao final do experimento.
-* Se os resultados são consistentes com as propriedades esperadas do algoritmo.
+cd ~/mininet/experimento/logs
 
-Quando aplicável, registre o número de mensagens trocadas, o tempo de execução e o comportamento diante de falhas simuladas.
+Monitore as mensagens trafegadas em tempo real em um host específico:
+Bash
+
+tail -f h1.log
+
+Na CLI interativa do Mininet (mininet>), realize pings de teste ou execute comandos manuais diretamente nos hosts virtuais se necessário (ex.: h1 ping -c 2 h2).
+
+Digite exit na CLI do Mininet para encerrar a simulação e revise todos os arquivos de log (h1.log, h2.log, etc.) para garantir que as mensagens percorreram a rede sem laços infinitos ou perdas inesperadas.
 
 ## Sequência de algoritmos
 
