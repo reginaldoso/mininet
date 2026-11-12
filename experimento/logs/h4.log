@@ -1,0 +1,2 @@
+[SERVIDOR] ('10.0.0.4', 5000): Nó h4 online. Vizinhos: ['10.0.3.1', '10.0.0.5']
+[INUNDACAO] ('10.0.0.5', 5000): Recebeu: MSG_TESTE_01

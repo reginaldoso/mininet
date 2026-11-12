@@ -7,65 +7,18 @@ Este repositório foi usado durante a disciplina Projeto Final de Curso 2, em 20
 
 ## Estrutura do repositório
 
-O repositório contém uma organização personalizada. Os experimentos de algoritmos distribuídos serão adicionados à pasta `algoritmos/`, preservando os diretórios e arquivos originais do Mininet.
+O repositório contém pastas e arquivos padrão do mininet e a pasta personalizada *experimento* que guarda os arquivos gerais usados no experimento.
+A pasta *experimento*, por sua vez, está organizada da seguinte forma:
 
-A estrutura proposta é:
 
-```text
-mininet/
-├── .github/
-├── algoritmos/
-│   ├── README.md               # Documentação dos experimentos
-│   ├── 01_basic_communication.py
-│   ├── 02_multiple_hosts.py
-│   ├── 03_broadcast.py
-│   ├── 04_gather.py
-│   ├── 05_leader_election.py
-│   ├── 06_lamport_clock.py
-│   ├── 07_mutual_exclusion.py
-│   ├── 08_heartbeat.py
-│   ├── 09_distributed_average.py
-│   ├── logs/
-│   └── hosts/
-│       ├── client.py           # Cliente de comunicação reutilizável
-│       └── server.py           # Servidor de comunicação reutilizável
-├── bin/
-├── build/
-├── custom/
-├── debian/
-├── doc/
-├── examples/
-├── mininet/                        # Implementação original do Mininet
-├── mininet.egg-info/
-├── rascunhos/
-├── util/
-├── .gitattributes
-├── .gitignore
-├── .pylintrc
-├── CONTRIBUTORS
-├── INSTALL
-├── LICENSE
-├── Makefile
-├── mn.1
-├── mnexec
-├── mnexec.1
-├── mnexec.c
-├── projetos.md                     # Planejamento dos experimentos
-├── README.md                       # Documentação original do Mininet
-└── setup.py
-```
+* `main.py`: Orquestrador principal. Inicializa a rede Mininet com a topologia escolhida, mapeia a adjacência dos nós, gera o arquivo `rede.json`, lança os processos `nodo.py` em cada host virtual e gerencia o encerramento limpo da simulação.
+* `nodo.py`: Aplicação autônoma executada internamente por cada host virtual. Lê o `rede.json`, gerencia conexões de socket (UDP/TCP) e executa a lógica do algoritmo distribuído (ex.: inundação, deduplicação de mensagens).
+* `log.py`: Módulo utilitário compartilhado que padroniza o formato de impressão das mensagens no terminal e nos arquivos de log.
+* `topologias/`: Diretório contendo as classes de topologia virtual do Mininet (`topo_anel.py`, `topo_estrela.py`, etc.).
+* `rede.json`: Arquivo dinâmico gerado durante o boot do experimento contendo a tabela de adjacência (IPs e vizinhos de cada nó).
+* `logs/`: Diretório gerado automaticamente para armazenar as saídas (`stdout` e `stderr`) individuais de cada nó (`h1.log`, `h2.log`, etc.).
 
 **Observação:** os diretórios originais do Mininet devem ser preservados.
-
-### Responsabilidade de diretórios e arquivos
-
-* `experimento/main.py`: Orquestrador principal. Inicializa a rede Mininet com a topologia escolhida, mapeia a adjacência dos nós, gera o arquivo `rede.json`, lança os processos `nodo.py` em cada host virtual e gerencia o encerramento limpo da simulação.
-* `experimento/nodo.py`: Aplicação autônoma executada internamente por cada host virtual. Lê o `rede.json`, gerencia conexões de socket (UDP/TCP) e executa a lógica do algoritmo distribuído (ex.: inundação, deduplicação de mensagens).
-* `experimento/log.py`: Módulo utilitário compartilhado que padroniza o formato de impressão das mensagens no terminal e nos arquivos de log.
-* `experimento/topologias/`: Diretório contendo as classes de topologia virtual do Mininet (`topo_anel.py`, `topo_estrela.py`, etc.).
-* `experimento/rede.json`: Arquivo dinâmico gerado durante o boot do experimento contendo a tabela de adjacência (IPs e vizinhos de cada nó).
-* `experimento/logs/`: Diretório gerado automaticamente para armazenar as saídas (`stdout` e `stderr`) individuais de cada nó (`h1.log`, `h2.log`, etc.).
-
 ---
 
 ### Acessar o diretório dos experimentos
