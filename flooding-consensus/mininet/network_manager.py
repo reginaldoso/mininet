@@ -11,6 +11,7 @@ from mininet.node import Controller
 from mininet.topo import SingleSwitchTopo
 from mininet.cli import CLI
 from mininet.log import setLogLevel
+from experiments.failure_injector import FailureInjector
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -114,9 +115,44 @@ if __name__ == "__main__":
     parser.add_argument("--n", type=int, default=5)
     parser.add_argument("--f", type=int, default=1)
 
+    parser.add_argument(
+    "--failure",
+    choices=["none", "random", "manual"],
+    default="none"
+    )
+
+    parser.add_argument(
+        "--fail-count",
+        type=int,
+        default=0
+    )
+
+    parser.add_argument(
+        "--fail-nodes",
+        type=str,
+        default=""
+    )
+
+    parser.add_argument(
+        "--fail-round",
+        type=int,
+        default=1
+    )
+
+
     args = parser.parse_args()
 
     start_experiment(
         n=args.n,
         f=args.f
     )
+    failure_injector = FailureInjector(
+    mode=args.failure,
+    fail_nodes=[
+        int(x) for x in args.fail_nodes.split(",") if x
+    ],
+    fail_count=args.fail_count,
+    fail_round=args.fail_round
+    )
+
+    nodes_to_fail = failure_injector.select_nodes(args.n)
