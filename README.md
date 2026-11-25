@@ -49,40 +49,6 @@ sudo apt install git
 
 ---
 
-## 3. Preparação do ambiente
-
-Crie o diretório raiz do projeto e acesse-o:
-```bash
-mkdir flooding-consensus
-cd flooding-consensus
-```
-
-Crie a estrutura de diretórios:
-```bash
-mkdir consensus
-mkdir events
-mkdir communication
-mkdir mininet
-mkdir experiments
-mkdir results
-mkdir results/logs
-mkdir results/metrics
-mkdir docs
-```
-
-Crie os arquivos `__init__.py` para definir os pacotes Python:
-```bash
-touch consensus/__init__.py
-touch events/__init__.py
-touch communication/__init__.py
-touch mininet/__init__.py
-touch experiments/__init__.py
-```
-
-Agora, adicione os códigos Python apresentados na documentação aos respectivos arquivos.
-
----
-
 ## 4. Instalação das dependências
 
 Instale as dependências diretamente:
@@ -111,6 +77,10 @@ O experimento pode ser configurado por meio dos parâmetros passados ao script `
 | :--- | :--- | :--- |
 | `--n` | Quantidade de processos | `5` |
 | `--f` | Limite máximo de falhas | `1` |
+| `--failure` | Modo de injeção de falhas | none |
+| `--fail-count` | Quantidade de processos que falharão | 1 |
+| `--fail-nodes` | Identificadores dos processos que falharão | 2,4 |
+| `--fail-round` | Rodada em que a falha será injetada | 1 |
 
 ### Exemplo de configuração
 
@@ -132,11 +102,38 @@ $$R = 1 + 1 = 2$$
 
 ---
 
-## 6. Executando o projeto
+## 6. Modos de execução
 
-Com os arquivos criados e as dependências instaladas, execute:
-```bash
-sudo python3 mininet/network_manager.py --n 5 --f 1
+O sistema disponibiliza três modos:
+
+- `none`: executa sem injeção de falhas.
+- `random`: seleciona aleatoriamente os processos.
+- `manual`: permite selecionar os processos que falharão.
+
+### Execução sem falhas
+
+\`\`\`bash
+sudo python3 mininet/network_manager.py --n 5 --f 1 --failure none
+\`\`\`
+
+### Execução com falhas aleatórias
+
+\`\`\`bash
+sudo python3 mininet/network_manager.py --n 5 --f 1 --failure random --fail-count 1 --fail-round 1
+\`\`\`
+
+### Execução com falhas manuais
+
+\`\`\`bash
+sudo python3 mininet/network_manager.py --n 5 --f 1 --failure manual --fail-nodes 2,4 --fail-round 1
+\`\`\`
+
+Nesse exemplo, os processos P2 e P4 serão selecionados para falhar na primeira rodada.
+
+**Observação:** a quantidade de falhas configurada deve respeitar o limite
+`f` quando o objetivo for avaliar as garantias de tolerância do algoritmo.
+
+
 ```
 
 O Mininet criará a topologia de rede e iniciará os processos. Cada host receberá um identificador e um valor inicial.
@@ -157,20 +154,23 @@ Cada processo executará sua própria instância do algoritmo.
 
 ```mermaid
 flowchart TD
-    A["Executar network_manager.py"] --> B["Criar topologia Mininet"]
-    B --> C["Inicializar hosts"]
-    C --> D["Iniciar processos"]
-    D --> E["Inicializar sockets UDP"]
-    E --> F["Iniciar primeira rodada"]
-    F --> G["Disseminar valores"]
-    G --> H["Receber mensagens"]
-    H --> I["Atualizar conjuntos V"]
-    I --> J["Verificar sincronização"]
-    J --> K{"Existem rodadas restantes?"}
-    K -->|Sim| F
-    K -->|Não| L["Calcular valor mínimo"]
-    L --> M["Registrar métricas"]
-    M --> N["Finalizar execução"]
+    A["Iniciar experimento"] --> B["Configurar modo de falha"]
+    B --> C["Inicializar processos"]
+    C --> D["Executar algoritmo"]
+    D --> E["Monitorar rodada atual"]
+    E --> F{"Rodada de falha atingida?"}
+    F -->|Não| E
+    F -->|Sim| G{"Modo de falha"}
+    G -->|none| H["Continuar execução"]
+    G -->|random| I["Selecionar processos"]
+    G -->|manual| J["Utilizar processos configurados"]
+    I --> K["Injetar falhas"]
+    J --> K
+    K --> L["Registrar eventos"]
+    L --> M["Continuar experimento"]
+    H --> N["Coletar métricas"]
+    M --> N
+
 ```
 
 ---
@@ -291,9 +291,11 @@ Esta implementação representa uma primeira versão experimental da arquitetura
 1. A comunicação utiliza **UDP**, que não garante entrega de mensagens.
 2. Os temporizadores são utilizados para identificar situações de *timeout*, mas não comprovam falhas reais.
 3. A implementação ainda não possui um mecanismo completo de recuperação de processos.
-4. A injeção automática de falhas ainda precisa ser implementada.
-5. A sincronização utiliza um limite de recebimento de mensagens e *timeout*.
-6. A correção formal do consenso ainda precisa ser verificada em relação às premissas do algoritmo original.
+4. A injeção de falhas depende da coordenação entre o gerenciador do experimento e os processos distribuídos.
+5. A ocorrência da falha deverá ser sincronizada com a rodada desejada.
+6. Falhas de processos e falhas de enlaces devem ser avaliadas separadamente.
+7. A sincronização utiliza um limite de recebimento de mensagens e *timeout*.
+8. A correção formal do consenso ainda precisa ser verificada em relação às premissas do algoritmo original.
 
 Portanto, os resultados devem ser interpretados como resultados experimentais do protótipo, e não como demonstração formal de tolerância a falhas.
 
@@ -307,11 +309,27 @@ Após validar a execução básica, recomenda-se implementar as seguintes melhor
 Desenvolver um controlador capaz de interromper processos durante a execução.
 
 ### 11.2. Falhas de comunicação
-Adicionar mecanismos para simular:
-- Perda de pacotes.
-- Atrasos de transmissão (latência/jitter).
-- Desconexão de enlaces.
-- Recuperação de enlaces.
+
+A arquitetura possui um componente denominado `FailureInjector`,
+responsável por controlar a seleção dos processos que sofrerão falhas.
+
+O componente permite configurar:
+
+- Modo de injeção.
+- Quantidade de processos afetados.
+- Identificação dos processos.
+- Rodada de ocorrência da falha.
+
+Cada falha deverá ser registrada com:
+
+| Campo | Descrição |
+|---|---|
+| process_id | Identificador do processo afetado |
+| failure_type | Tipo da falha |
+| round | Rodada em que ocorreu |
+| timestamp | Instante da ocorrência |
+
+Os registros serão utilizados posteriormente na análise dos experimentos.
 
 ### 11.3. Monitoramento
 Desenvolver um componente centralizado para consolidar as métricas dos processos.
