@@ -1,0 +1,9 @@
+{
+    "nodes": 5,
+    "fault_limit": 1,
+    "port": 5000,
+    "round_timeout": 5,
+    "topology": "star",
+    "protocol": "UDP",
+    "algorithm": "Flooding-Based Consensus"
+}
