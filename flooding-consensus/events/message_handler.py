@@ -1,23 +1,23 @@
-from communication.message import Message
+from communication.message import Message ## determinar a função da classe Message neste código
 
 
 class MessageHandler:
 
-    def __init__(self, node):
+    def __init__(self, node): ## self guarda o ConsensusNode ao qual o gestor de mensagem pertence
         self.node = node
 
-    async def handle(self, data):
+    async def handle(self, data):## gerir mensagens enviadas aos nós vizinhos
 
         try:
             message = Message.deserialize(data)
 
-            self.node.metrics.register_received()
+            self.node.metrics.register_received() ## falta implementar função que vai contabilizar msgs recebidas
 
             if message.sender == self.node.process_id:
                 return
 
             if message.round_number > self.node.round_number:
-                return
+                return ## isto está errado. Precisa corrigir
 
             self.node.received_messages[
                 message.round_number

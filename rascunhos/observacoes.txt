@@ -1,0 +1,45 @@
+consensus/consensus_node.py:
+
+1:
+
+Define a variável round_timeout com valor "5" na inicialização da classe.
+No algoritmo do artigo não é assim. A rodada dura o tempo necessário para que todos os processos corretos
+enviem suas mensagens.
+
+
+2: o nó precisa manter duas variáveis. Um para guardar os processos corretos e outra para guardar os
+processos falhos. Na verdade. O algoritmo envia para todos os que estão na lista "pairs".
+O detector de falha precisa, caso se confirme que o processo falhou, precisa remover o host falho da 
+lista "pairs" e decrementar a variável "total_nodes".
+
+
+3:
+Desafio
+O código events/message_handers, linha 19 e 20 trás o trecho abaixo:
+
+if message.round_number > self.node.round_number:
+    return
+Esse trecho faz com que o host descarte valores referentes a rodadas com o número maior do que 
+a rodada atual. Mas isso não pode acontecer na implementação do algoritmo.
+No modelo teórico (Rede Síncrona, em um sistema perfeitamente síncrono, existem limites rígidos 
+de tempo para entrega de mensagens: todos os nós estão na mesma rodada r ao mesmo tempo.
+Nenhum processo inicia a rodada (r + 1) antes que a rodada r tenha terminado para todo o sistema.
+Portanto, é teoricamente impossível um processo pi receber uma mensagem da rodada (r + 1) enquanto
+ainda está na rodada r.
+Mas, como estamos simulando esse algoritmo síncrono sobre uma rede emulada (pode ocorrer também
+numa rede real) usando sockets UDP (poderia ocorrer também com TCP) e sem um relógio de hardware
+sincronizado, o algoritmo funciona como um modelo síncrono baseado em rodadas (round-based) 
+(usando o wait until para sincronizar o avanço de rodada).   
+
+Mesmo que todos os hosts rodem na mesma máquina física, o escalonamento de processos do Linux pode 
+fazer com que um nó pk​ receba as respostas da rodada r milissegundos antes de pi​, avance para a 
+rodada (r + 1) e já envie a mensagem da rodada (r+1) pelo socket enquanto pi​ ainda está processando
+o fim da rodada r.   
+Se pi simplesmente ignorar ou descartar uma mensagem com msg.round == r + 1 porque ainda está na
+rodada r, o protocolo vai travar (deadlock) na rodada seguinte esperando por uma mensagem que já
+chegou e foi jogada fora.
+
+Resumo prático: No papel (prova teórica do algoritmo), mensagens da rodada (r+1) não existem
+durante a rodada r. No código Python precisa manter um buffer indexado por rodada (received_msgs[round])
+para evitar perda de mensagens por micro-dessincronização do sistema operacional..
+

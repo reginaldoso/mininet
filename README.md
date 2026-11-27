@@ -85,7 +85,13 @@ O experimento pode ser configurado por meio dos parâmetros passados ao script `
 ### Exemplo de configuração
 
 ```bash
-sudo python3 mininet/network_manager.py --n 5 --f 1
+sudo python3 "nome_pasta_protocolo"/mininet/network_manager.py --n 5 --f 1
+```
+
+Exemplo:
+
+```bash
+sudo python3 flooding-consensus/mininet/network_manager.py --n 5 --f 1
 ```
 
 Nesse exemplo:
@@ -95,7 +101,7 @@ Nesse exemplo:
 - Serão executadas duas rodadas.
 
 A quantidade de rodadas ($R$) é determinada pela fórmula:
-$$R = f + 1$$
+$$R = f + 1
 
 Portanto:
 $$R = 1 + 1 = 2$$
@@ -113,19 +119,19 @@ O sistema disponibiliza três modos:
 ### Execução sem falhas
 
 \`\`\`bash
-sudo python3 mininet/network_manager.py --n 5 --f 1 --failure none
+sudo python3 flooding-consensus/mininet/network_manager.py --n 5 --f 1 --failure none
 \`\`\`
 
 ### Execução com falhas aleatórias
 
 \`\`\`bash
-sudo python3 mininet/network_manager.py --n 5 --f 1 --failure random --fail-count 1 --fail-round 1
+sudo python3 flooding-consensus/mininet/network_manager.py --n 5 --f 1 --failure random --fail-count 1 --fail-round 1
 \`\`\`
 
 ### Execução com falhas manuais
 
 \`\`\`bash
-sudo python3 mininet/network_manager.py --n 5 --f 1 --failure manual --fail-nodes 2,4 --fail-round 1
+sudo python3 flooding-consensus/mininet/network_manager.py --n 5 --f 1 --failure manual --fail-nodes 2,4 --fail-round 1
 \`\`\`
 
 Nesse exemplo, os processos P2 e P4 serão selecionados para falhar na primeira rodada.
@@ -264,19 +270,19 @@ Os arquivos CSV apresentam as seguintes colunas/informações:
 
 ### Experimento 1 — Cinco processos e uma falha
 ```bash
-sudo python3 mininet/network_manager.py --n 5 --f 1
+sudo python3 flooding-consensus/mininet/network_manager.py --n 5 --f 1
 ```
 Quantidade de rodadas: $R = 2$
 
 ### Experimento 2 — Cinco processos e duas falhas
 ```bash
-sudo python3 mininet/network_manager.py --n 5 --f 2
+sudo python3 flooding-consensus/mininet/network_manager.py --n 5 --f 2
 ```
 Quantidade de rodadas: $R = 3$
 
 ### Experimento 3 — Dez processos e duas falhas
 ```bash
-sudo python3 mininet/network_manager.py --n 10 --f 2
+sudo python3 flooding-consensus/mininet/network_manager.py --n 10 --f 2
 ```
 Quantidade de rodadas: $R = 3$
 

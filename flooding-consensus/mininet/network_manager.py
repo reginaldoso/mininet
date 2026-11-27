@@ -3,21 +3,19 @@ import sys
 import json
 import time
 import argparse
-
 from pathlib import Path
-
 from mininet.net import Mininet
 from mininet.node import Controller
 from mininet.topo import SingleSwitchTopo
 from mininet.cli import CLI
 from mininet.log import setLogLevel
-from experiments.failure_injector import FailureInjector
-
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-sys.path.insert(0, str(PROJECT_ROOT))
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
+from experiments.failure_injector import FailureInjector
 
 def start_experiment(n=5, f=1):
 

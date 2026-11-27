@@ -38,7 +38,7 @@ class SocketManager:
             data,
             (destination, self.port)
         )
-        self.node.metrics.register_sent()
+        self.node.metrics.register_sent() ## falta implementar função que registrar quant. de mensagens enviadas
 
     def close(self):
 

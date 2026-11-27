@@ -1,0 +1,824 @@
+communication/communication_manager.py: 
+vazio
+communication/message.py:
+import json
+from dataclasses import dataclass, asdict
+
+
+@dataclass
+class Message:
+    sender: int
+    round_number: int
+    values: list
+    event_type: str = "CONSENSUS_UPDATE"
+
+    def serialize(self):
+        return json.dumps(asdict(self)).encode("utf-8")
+
+    @staticmethod
+    def deserialize(data):
+        obj = json.loads(data.decode("utf-8"))
+        return Message(**obj)
+communication/socket_manager.py:
+import asyncio
+import socket
+
+
+class UDPReceiver(asyncio.DatagramProtocol):
+
+    def __init__(self, node):
+        self.node = node
+
+    def datagram_received(self, data, addr):
+        asyncio.create_task(
+            self.node.message_handler.handle(data)
+        )
+
+
+class SocketManager:
+
+    def __init__(self, node, port=5000):
+        self.node = node
+        self.port = port
+        self.transport = None
+
+    async def start(self):
+
+        loop = asyncio.get_running_loop()
+
+        self.transport, _ = await loop.create_datagram_endpoint(
+            lambda: UDPReceiver(self.node),
+            local_addr=("0.0.0.0", self.port)
+        )
+
+    async def send(self, data, destination):
+
+        if self.transport is None:
+            raise RuntimeError("Socket não inicializado")
+
+        self.transport.sendto(
+            data,
+            (destination, self.port)
+        )
+        self.node.metrics.register_sent()
+
+    def close(self):
+
+        if self.transport:
+            self.transport.close()
+
+events/event_manager.py:
+import asyncio
+
+
+class EventManager:
+
+    def __init__(self):
+        self.queue = asyncio.Queue()
+
+    async def publish(self, event_type, data=None):
+        await self.queue.put({
+            "type": event_type,
+            "data": data
+        })
+
+    async def subscribe(self):
+        return await self.queue.get()
+events/failure_handler.py:
+import time
+
+
+class FailureHandler:
+
+    def __init__(self):
+        self.failures = []
+
+    def register_failure(self, process_id, failure_type):
+
+        event = {
+            "process_id": process_id,
+            "failure_type": failure_type,
+            "timestamp": time.time()
+        }
+
+        self.failures.append(event)
+
+        print(
+            f"[FAILURE] Processo {process_id}: "
+            f"{failure_type}"
+        )
+
+    def get_failures(self):
+        return self.failures
+
+events/message_handler.py:
+from communication.message import Message
+
+
+class MessageHandler:
+
+    def __init__(self, node):
+        self.node = node
+
+    async def handle(self, data):
+
+        try:
+            message = Message.deserialize(data)
+
+            self.node.metrics.register_received()
+
+            if message.sender == self.node.process_id:
+                return
+
+            if message.round_number > self.node.round_number:
+                return
+
+            self.node.received_messages[
+                message.round_number
+            ].add(message.sender)
+
+            self.node.values.update(message.values)
+
+            await self.node.event_manager.publish(
+                "MESSAGE_RECEIVED",
+                {
+                    "sender": message.sender,
+                    "round": message.round_number,
+                    "values": message.values
+                }
+            )
+
+        except Exception as error:
+            print(
+                f"[P{self.node.process_id}] "
+                f"Erro ao processar mensagem: {error}"
+            )
+
+events/timer_handler.py:
+import asyncio
+
+
+class TimerHandler:
+
+    @staticmethod
+    async def wait(seconds):
+        await asyncio.sleep(seconds)
+
+    @staticmethod
+    async def wait_for_event(event, timeout):
+
+        try:
+            return await asyncio.wait_for(
+                event,
+                timeout=timeout
+            )
+
+        except asyncio.TimeoutError:
+            return None
+
+consensus/consensus_node.py:
+import asyncio
+from collections import defaultdict
+
+from events.event_manager import EventManager
+from events.message_handler import MessageHandler
+from communication.socket_manager import SocketManager
+from consensus.flooding_algorithm import FloodingAlgorithm
+from consensus.round_manager import RoundManager
+from experiments.metrics_collector import MetricsCollector
+
+
+class ConsensusNode:
+
+    def __init__(
+        self,
+        process_id,
+        initial_value,
+        peers,
+        total_nodes,
+        fault_limit,
+        port=5000,
+        round_timeout=5
+    ):
+
+        self.process_id = process_id
+        self.values = {initial_value}
+        self.peers = peers
+
+        self.total_nodes = total_nodes
+        self.fault_limit = fault_limit
+        self.round_timeout = round_timeout
+
+        self.round_manager = RoundManager(fault_limit)
+
+        self.round_number = 1
+
+        self.received_messages = defaultdict(set)
+
+        self.event_manager = EventManager()
+
+        self.message_handler = MessageHandler(self)
+
+        self.socket_manager = SocketManager(
+            self,
+            port
+        )
+
+        self.algorithm = FloodingAlgorithm(self)
+
+        self.metrics = MetricsCollector(
+            process_id
+        )
+
+    async def run(self):
+
+        print(
+            f"[P{self.process_id}] "
+            f"Iniciando com valor {self.values}"
+        )
+
+        await self.socket_manager.start()
+
+        # Tempo para inicialização dos sockets.
+        await asyncio.sleep(1)
+
+        success = True
+
+        try:
+
+            while self.round_manager.has_next_round():
+
+                self.round_number = (
+                    self.round_manager.get_current_round()
+                )
+
+                completed = await self.algorithm.execute_round()
+
+                if not completed:
+                    success = False
+                    break
+
+                self.round_manager.advance()
+
+            decision = None
+
+            if success:
+                decision = self.algorithm.calculate_decision()
+
+                await self.event_manager.publish(
+                    "CONSENSUS_REACHED",
+                    decision
+                )
+
+                print(
+                    f"[P{self.process_id}] "
+                    f"Decisão final: {decision}"
+                )
+
+            self.metrics.save(
+                decision,
+                self.round_number if success else (
+                    self.round_number - 1
+                ),
+                success
+            )
+
+        finally:
+            self.socket_manager.close()
+
+        return decision
+
+
+consensus/flooding_algorithm.py:
+import asyncio
+
+from communication.message import Message
+from events.timer_handler import TimerHandler
+
+
+class FloodingAlgorithm:
+
+    def __init__(self, node):
+        self.node = node
+
+    async def broadcast_values(self):
+
+        message = Message(
+            sender=self.node.process_id,
+            round_number=self.node.round_number,
+            values=sorted(self.node.values)
+        )
+
+        for peer_id, peer_ip in self.node.peers.items():
+
+            if peer_id == self.node.process_id:
+                continue
+
+            await self.node.socket_manager.send(
+                message.serialize(),
+                peer_ip
+            )
+
+        await self.node.event_manager.publish(
+            "MESSAGE_SENT",
+            {
+                "round": self.node.round_number,
+                "values": sorted(self.node.values)
+            }
+        )
+
+    async def wait_for_messages(self):
+
+        required_messages = (
+            self.node.total_nodes
+            - self.node.fault_limit
+            - 1
+        )
+
+        if required_messages <= 0:
+            return True
+
+        deadline = (
+            asyncio.get_running_loop().time()
+            + self.node.round_timeout
+        )
+
+        while True:
+
+            received = self.node.received_messages[
+                self.node.round_number
+            ]
+
+            if len(received) >= required_messages:
+                return True
+
+            remaining = (
+                deadline - asyncio.get_running_loop().time()
+            )
+
+            if remaining <= 0:
+                return False
+
+            await TimerHandler.wait(
+                min(0.05, remaining)
+            )
+
+    async def execute_round(self):
+
+        await self.node.event_manager.publish(
+            "ROUND_STARTED",
+            self.node.round_number
+        )
+
+        await self.broadcast_values()
+
+        completed = await self.wait_for_messages()
+
+        if not completed:
+
+            print(
+                f"[P{self.node.process_id}] "
+                f"Timeout na rodada {self.node.round_number}"
+            )
+
+            return False
+
+        await self.node.event_manager.publish(
+            "ROUND_COMPLETED",
+            self.node.round_number
+        )
+
+        return True
+
+    def calculate_decision(self):
+
+        if not self.node.values:
+            raise RuntimeError("Conjunto de valores vazio")
+
+        return min(self.node.values)
+
+consensus/round_manager.py:
+class RoundManager:
+
+    def __init__(self, fault_limit):
+        self.fault_limit = fault_limit
+        self.current_round = 1
+        self.total_rounds = fault_limit + 1
+
+    def has_next_round(self):
+        return self.current_round <= self.total_rounds
+
+    def advance(self):
+        self.current_round += 1
+
+    def get_current_round(self):
+        return self.current_round
+
+experiments/experiment_manager.py:
+vazio
+experiments/failure_injector.py:
+import random
+import time
+
+
+class FailureInjector:
+
+    def __init__(
+        self,
+        mode="none",
+        fail_nodes=None,
+        fail_count=0,
+        fail_round=1
+    ):
+
+        self.mode = mode
+        self.fail_nodes = fail_nodes or []
+        self.fail_count = fail_count
+        self.fail_round = fail_round
+
+        self.injected = False
+
+    def select_nodes(self, total_nodes):
+
+        if self.mode == "none":
+            return []
+
+        if self.mode == "manual":
+            return self.fail_nodes
+
+        if self.mode == "random":
+
+            if self.fail_count > total_nodes:
+                raise ValueError("Quantidade de falhas inválida")
+
+            return random.sample(
+                range(1, total_nodes + 1),
+                self.fail_count
+            )
+
+        raise ValueError("Modo de falha desconhecido")
+
+    def should_inject(self, current_round):
+
+        return (
+            not self.injected
+            and current_round == self.fail_round
+            and self.mode != "none"
+        )
+
+    def mark_injected(self):
+        self.injected = True
+
+experiments/failure_scenarios.py:
+class FailureScenarios:
+
+    def __init__(self, fault_limit):
+
+        self.fault_limit = fault_limit
+
+    def validate_failure_count(self, failures):
+
+        if failures < 0:
+            return False
+
+        return failures <= self.fault_limit
+
+    def classify_scenario(self, failures):
+
+        if failures == 0:
+            return "NO_FAILURE"
+
+        if failures <= self.fault_limit:
+            return "WITHIN_TOLERANCE"
+
+        return "ABOVE_TOLERANCE"
+
+    def describe(self, failures):
+
+        return {
+            "failures": failures,
+            "fault_limit": self.fault_limit,
+            "scenario": self.classify_scenario(failures),
+            "within_tolerance": self.validate_failure_count(
+                failures
+            )
+        }
+
+"""
+Esse módulo não provoca falhas automaticamente. Ele classifica os cenários. A injeção efetiva de falhas será realizada posteriormente pelo controlador dos experimentos.
+"""
+experiments/metrics_collector.py:
+import csv
+import os
+import time
+
+
+class MetricsCollector:
+
+    def __init__(self, process_id, output_dir="results/metrics"):
+
+        self.process_id = process_id
+        self.output_dir = output_dir
+
+        os.makedirs(
+            output_dir,
+            exist_ok=True
+        )
+
+        self.start_time = time.time()
+        self.messages_sent = 0
+        self.messages_received = 0
+
+    def register_sent(self):
+        self.messages_sent += 1
+
+    def register_received(self):
+        self.messages_received += 1
+
+    def save(self, decision, rounds, success):
+
+        elapsed = time.time() - self.start_time
+
+        filename = os.path.join(
+            self.output_dir,
+            f"process_{self.process_id}.csv"
+        )
+
+        with open(
+            filename,
+            "w",
+            newline="",
+            encoding="utf-8"
+        ) as file:
+
+            writer = csv.writer(file)
+
+            writer.writerow([
+                "process_id",
+                "execution_time",
+                "messages_sent",
+                "messages_received",
+                "rounds",
+                "decision",
+                "success"
+            ])
+
+            writer.writerow([
+                self.process_id,
+                elapsed,
+                self.messages_sent,
+                self.messages_received,
+                rounds,
+                decision,
+                success
+            ])
+
+mininet/network_manager.py:
+import os
+import sys
+import json
+import time
+import argparse
+from pathlib import Path
+from mininet.net import Mininet
+from mininet.node import Controller
+from mininet.topo import SingleSwitchTopo
+from mininet.cli import CLI
+from mininet.log import setLogLevel
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from experiments.failure_injector import FailureInjector
+
+def start_experiment(n=5, f=1):
+
+    if n <= f or f < 0:
+        raise ValueError("Parâmetros inválidos")
+
+    os.chdir(PROJECT_ROOT)
+
+    os.makedirs("results/logs", exist_ok=True)
+    os.makedirs("results/metrics", exist_ok=True)
+
+    topo = SingleSwitchTopo(k=n)
+
+    net = Mininet(
+        topo=topo,
+        controller=Controller,
+        autoSetMacs=True
+    )
+
+    processes = []
+
+    try:
+
+        net.start()
+
+        hosts = net.hosts
+
+        peers = {
+            i: f"10.0.0.{i}"
+            for i in range(1, n + 1)
+        }
+
+        peers_json = json.dumps(peers)
+
+        print("\n===== INICIANDO CONSENSO =====\n")
+
+        time.sleep(2)
+
+        for i, host in enumerate(hosts, start=1):
+
+            value = i * 10
+
+            command = [
+                "python3",
+                str(PROJECT_ROOT / "main.py"),
+                "--id", str(i),
+                "--value", str(value),
+                "--peers", peers_json,
+                "--n", str(n),
+                "--f", str(f),
+                "--port", "5000",
+                "--timeout", "5"
+            ]
+
+            logfile = open(
+                f"results/logs/process_{i}.log",
+                "w"
+            )
+
+            process = host.popen(
+                command,
+                cwd=str(PROJECT_ROOT),
+                stdout=logfile,
+                stderr=logfile
+            )
+
+            processes.append((process, logfile))
+
+        print("\nProcessos iniciados.")
+
+        print("Topologia:", net.topo)
+
+        CLI(net)
+
+    finally:
+
+        print("\nEncerrando processos...")
+
+        for process, logfile in processes:
+
+            if process.poll() is None:
+                process.terminate()
+
+            logfile.close()
+
+        net.stop()
+
+
+if __name__ == "__main__":
+
+    setLogLevel("info")
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--n", type=int, default=5)
+    parser.add_argument("--f", type=int, default=1)
+
+    parser.add_argument(
+    "--failure",
+    choices=["none", "random", "manual"],
+    default="none"
+    )
+
+    parser.add_argument(
+        "--fail-count",
+        type=int,
+        default=0
+    )
+
+    parser.add_argument(
+        "--fail-nodes",
+        type=str,
+        default=""
+    )
+
+    parser.add_argument(
+        "--fail-round",
+        type=int,
+        default=1
+    )
+
+
+    args = parser.parse_args()
+
+    start_experiment(
+        n=args.n,
+        f=args.f
+    )
+    failure_injector = FailureInjector(
+    mode=args.failure,
+    fail_nodes=[
+        int(x) for x in args.fail_nodes.split(",") if x
+    ],
+    fail_count=args.fail_count,
+    fail_round=args.fail_round
+    )
+
+    nodes_to_fail = failure_injector.select_nodes(args.n)
+
+mininet/topology.py:
+from mininet.topo import Topo
+
+
+class ConsensusTopology(Topo):
+
+    def build(self, n=5):
+
+        switch = self.addSwitch("s1")
+
+        for i in range(1, n + 1):
+
+            host = self.addHost(
+                f"h{i}",
+                ip=f"10.0.0.{i}/24"
+            )
+
+            self.addLink(host, switch)
+
+
+topos = {
+    "consensus": lambda: ConsensusTopology(n=5)
+}
+
+results/logs
+#gera em tempo de execução
+results/metrics
+#gera em tempo de execução
+
+
+config.json:
+{
+    "nodes": 5,
+    "fault_limit": 1,
+    "port": 5000,
+    "round_timeout": 5,
+    "topology": "star",
+    "protocol": "UDP",
+    "algorithm": "Flooding-Based Consensus"
+}
+
+main.py:
+import argparse
+import asyncio
+import json
+
+from consensus.consensus_node import ConsensusNode
+
+
+async def main():
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--id", type=int, required=True)
+    parser.add_argument("--value", type=int, required=True)
+    parser.add_argument("--peers", type=str, required=True)
+    parser.add_argument("--n", type=int, required=True)
+    parser.add_argument("--f", type=int, required=True)
+    parser.add_argument("--port", type=int, default=5000)
+    parser.add_argument("--timeout", type=float, default=5)
+
+    args = parser.parse_args()
+
+    if args.f < 0 or args.n <= args.f:
+        raise ValueError("Configuração inválida de falhas")
+
+    peers = json.loads(args.peers)
+
+    peers = {
+        int(process_id): ip
+        for process_id, ip in peers.items()
+    }
+
+    node = ConsensusNode(
+        process_id=args.id,
+        initial_value=args.value,
+        peers=peers,
+        total_nodes=args.n,
+        fault_limit=args.f,
+        port=args.port,
+        round_timeout=args.timeout
+    )
+
+    await node.run()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+requirements.txt:
+mininet

@@ -19,7 +19,7 @@ class ConsensusNode:
         total_nodes,
         fault_limit,
         port=5000,
-        round_timeout=5
+        round_timeout=5 ##verificar isto
     ):
 
         self.process_id = process_id
